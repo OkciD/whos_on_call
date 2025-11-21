@@ -14,3 +14,7 @@ clean:
 .PHONY: run
 run: clean build
 	$(BIN_PATH)/whos_on_call
+
+.PHONY: tidy
+tidy:
+	go mod tidy
