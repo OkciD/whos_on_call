@@ -13,8 +13,15 @@ clean:
 
 .PHONY: run
 run: clean build
-	$(BIN_PATH)/whos_on_call
+	$(BIN_PATH)/whos_on_call -config=$(ROOT_PATH)/configs/local.json
+
+.PHONY: start
+start: run
 
 .PHONY: tidy
 tidy:
 	go mod tidy
+
+.PHONY: fmt
+fmt:
+	go fmt ./...
