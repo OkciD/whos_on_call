@@ -13,7 +13,7 @@ type Config struct {
 		UID    string `mapstructure:"uid"`
 		Name   string `mapstructure:"name"`
 		ApiKey string `mapstructure:"apiKey"`
-	}
+	} `mapstructure:"users"`
 }
 
 type Repository struct {

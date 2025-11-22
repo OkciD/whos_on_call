@@ -2,9 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
+	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
+	UserUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 )
 
 func main() {
@@ -23,5 +24,11 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("About to listen on addr %s", config.ListenAddr)
+	userRepo, err := UserRepositoryInmemory.New(&config.User.Repository)
+	if err != nil {
+		// TODO: no panic
+		panic(err)
+	}
+
+	_ = UserUseCase.New(userRepo)
 }

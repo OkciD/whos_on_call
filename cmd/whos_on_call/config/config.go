@@ -5,11 +5,16 @@ import (
 	"path/filepath"
 	"strings"
 
+	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	ListenAddr string `mapstructure:"listenAddr"`
+
+	User struct {
+		Repository UserRepositoryInmemory.Config `mapstructure:"repository"`
+	} `mapstructure:"user"`
 }
 
 func ReadConfig(configFilePath string) (*Config, error) {

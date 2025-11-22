@@ -1,7 +1,11 @@
 package user
 
-import "github.com/OkciD/whos_on_call/internal/app/models"
+import (
+	"context"
+
+	"github.com/OkciD/whos_on_call/internal/app/models"
+)
 
 type UseCase interface {
-	Authorize(apiKey string) (*models.User, error)
+	Authorize(ctx context.Context, apiKey string) (*models.User, error)
 }
