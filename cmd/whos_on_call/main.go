@@ -5,9 +5,9 @@ import (
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
 
-	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
-	UserUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
-	ConfigUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
+	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
+	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
+	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 )
 
 func main() {
@@ -20,17 +20,17 @@ func main() {
 		panic("failed to parse config path")
 	}
 
-	config, err := ConfigUtils.ReadConfig[config.Config](*configFilePathPtr)
+	config, err := configUtils.ReadConfig[config.Config](*configFilePathPtr)
 	if err != nil {
 		// TODO: no panic
 		panic(err)
 	}
 
-	userRepo, err := UserRepositoryInmemory.New(&config.User.Repository)
+	userRepo, err := userRepositoryInmemory.New(&config.User.Repository)
 	if err != nil {
 		// TODO: no panic
 		panic(err)
 	}
 
-	_ = UserUseCase.New(userRepo)
+	_ = userUseCase.New(userRepo)
 }
