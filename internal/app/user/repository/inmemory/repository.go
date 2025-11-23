@@ -10,10 +10,10 @@ import (
 
 type Config struct {
 	Users []struct {
-		UID    string `mapstructure:"uid"`
-		Name   string `mapstructure:"name"`
-		ApiKey string `mapstructure:"apiKey"`
-	} `mapstructure:"users"`
+		UID    string `json:"uid"`
+		Name   string `json:"name"`
+		ApiKey string `json:"apiKey"`
+	} `json:"users"`
 }
 
 type Repository struct {

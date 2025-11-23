@@ -1,5 +1,7 @@
 {
-    "listenAddr": ":8080",
+    "server": {
+        "listenAddr": ":8080"
+    },
     "user": {
         "repository": {
             "users": [

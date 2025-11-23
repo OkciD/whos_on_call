@@ -1,41 +1,15 @@
 package config
 
 import (
-	"fmt"
-	"path/filepath"
-	"strings"
-
 	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
-	"github.com/spf13/viper"
 )
 
 type Config struct {
-	ListenAddr string `mapstructure:"listenAddr"`
+	Server struct {
+		ListenAddr string `json:"listenAddr"`
+	} `json:"server"`
 
 	User struct {
-		Repository UserRepositoryInmemory.Config `mapstructure:"repository"`
-	} `mapstructure:"user"`
-}
-
-func ReadConfig(configFilePath string) (*Config, error) {
-	fileName := strings.TrimSuffix(filepath.Base(configFilePath), filepath.Ext(configFilePath))
-	dir := filepath.Dir(configFilePath)
-
-	viper.AddConfigPath(dir)
-	viper.SetConfigType("json")
-	viper.SetConfigName(fileName)
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config: %w", err)
-	}
-
-	var config Config
-
-	err = viper.Unmarshal(&config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
-	}
-
-	return &config, nil
+		Repository UserRepositoryInmemory.Config `json:"repository"`
+	} `json:"user"`
 }

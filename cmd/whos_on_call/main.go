@@ -4,8 +4,10 @@ import (
 	"flag"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
+
 	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	UserUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
+	ConfigUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 )
 
 func main() {
@@ -18,7 +20,7 @@ func main() {
 		panic("failed to parse config path")
 	}
 
-	config, err := config.ReadConfig(*configFilePathPtr)
+	config, err := ConfigUtils.ReadConfig[config.Config](*configFilePathPtr)
 	if err != nil {
 		// TODO: no panic
 		panic(err)
