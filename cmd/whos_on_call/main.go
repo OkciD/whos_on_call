@@ -2,9 +2,11 @@ package main
 
 import (
 	"flag"
+	"net/http"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
 
+	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
@@ -32,5 +34,15 @@ func main() {
 		panic(err)
 	}
 
-	_ = userUseCase.New(userRepo)
+	userUseCase := userUseCase.New(userRepo)
+
+	mux := http.NewServeMux()
+
+	userHttpDelivery.New(mux, userUseCase)
+
+	err = http.ListenAndServe(config.Server.ListenAddr, mux)
+	if err != nil {
+		// TODO: no panic
+		panic(err)
+	}
 }
