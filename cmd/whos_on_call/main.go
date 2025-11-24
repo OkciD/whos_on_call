@@ -70,9 +70,10 @@ func main() {
 	userHttpDelivery.New(mux, userUseCase)
 
 	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
+	requestIdMiddleWare := middleware.NewRequestIdMiddleware()
 	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
 
-	wrappedMux := contentTypeMiddleware(authMiddleware(mux))
+	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(authMiddleware(mux)))
 
 	logrus.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
 	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
