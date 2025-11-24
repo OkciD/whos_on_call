@@ -37,9 +37,7 @@ func main() {
 		hostname = "unk"
 	}
 
-	logger := logrus.WithFields(logrus.Fields{
-		"host": hostname,
-	})
+	logger := logrus.WithField("host", hostname)
 
 	if cfg.GetLogFormat() == config.LogFormatText {
 		logger.Logger.SetFormatter(&logrus.TextFormatter{
@@ -71,11 +69,12 @@ func main() {
 
 	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
 	requestIdMiddleWare := middleware.NewRequestIdMiddleware()
+	accessLogMiddleware := middleware.NewAccessLogMiddleware(logger)
 	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
 
-	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(authMiddleware(mux)))
+	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(accessLogMiddleware(authMiddleware(mux))))
 
-	logrus.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
+	logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
 	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
 	if err != nil {
 		logrus.WithError(err).Fatalf("http server error")
