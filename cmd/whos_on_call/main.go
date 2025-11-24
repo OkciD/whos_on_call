@@ -10,6 +10,7 @@ import (
 	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 )
 
 func main() {
@@ -40,7 +41,12 @@ func main() {
 
 	userHttpDelivery.New(mux, userUseCase)
 
-	err = http.ListenAndServe(config.Server.ListenAddr, mux)
+	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
+	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
+
+	wrappedMux := contentTypeMiddleware(authMiddleware(mux))
+
+	err = http.ListenAndServe(config.Server.ListenAddr, wrappedMux)
 	if err != nil {
 		// TODO: no panic
 		panic(err)
