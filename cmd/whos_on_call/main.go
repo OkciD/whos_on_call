@@ -2,9 +2,14 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
+	"github.com/sirupsen/logrus"
 
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
@@ -19,20 +24,43 @@ func main() {
 	flag.Parse()
 
 	if configFilePathPtr == nil || *configFilePathPtr == "" {
-		// TODO: no panic
-		panic("failed to parse config path")
+		log.Fatal("-config option required")
 	}
 
-	config, err := configUtils.ReadConfig[config.Config](*configFilePathPtr)
+	cfg, err := configUtils.ReadConfig[config.Config](*configFilePathPtr)
 	if err != nil {
-		// TODO: no panic
-		panic(err)
+		log.Fatal(fmt.Errorf("failed to read config: %w", err))
 	}
 
-	userRepo, err := userRepositoryInmemory.New(&config.User.Repository)
+	hostname, err := os.Hostname()
 	if err != nil {
-		// TODO: no panic
-		panic(err)
+		hostname = "unk"
+	}
+
+	logger := logrus.WithFields(logrus.Fields{
+		"host": hostname,
+	})
+
+	if cfg.GetLogFormat() == config.LogFormatText {
+		logger.Logger.SetFormatter(&logrus.TextFormatter{
+			FullTimestamp:   true,
+			TimestampFormat: time.RFC3339,
+		})
+	} else {
+		logger.Logger.SetFormatter(&logrus.JSONFormatter{
+			TimestampFormat: time.RFC3339,
+		})
+	}
+
+	logLevel, err := logrus.ParseLevel(string(cfg.Logger.Level))
+	if err != nil {
+		logLevel = logrus.InfoLevel
+	}
+	logger.Logger.SetLevel(logLevel)
+
+	userRepo, err := userRepositoryInmemory.New(&cfg.User.Repository)
+	if err != nil {
+		logrus.WithError(err).Fatalf("failed to create user repository")
 	}
 
 	userUseCase := userUseCase.New(userRepo)
@@ -46,9 +74,9 @@ func main() {
 
 	wrappedMux := contentTypeMiddleware(authMiddleware(mux))
 
-	err = http.ListenAndServe(config.Server.ListenAddr, wrappedMux)
+	logrus.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
+	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
 	if err != nil {
-		// TODO: no panic
-		panic(err)
+		logrus.WithError(err).Fatalf("http server error")
 	}
 }

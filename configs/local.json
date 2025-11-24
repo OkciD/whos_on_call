@@ -2,6 +2,10 @@
     "server": {
         "listenAddr": ":8080"
     },
+    "logger": {
+        "level": "trace",
+        "format": "text"
+    },
     "user": {
         "repository": {
             "users": [
