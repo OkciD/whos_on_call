@@ -7,17 +7,16 @@ import (
 	"github.com/google/uuid"
 )
 
-const (
-	REQUEST_ID_CTX_KEY string = "requestId"
-	REQUEST_ID_HEADER  string = "X-Request-Id"
-)
+const REQUEST_ID_HEADER string = "X-Request-Id"
+
+type requestIdCtxKey = struct{}
 
 func NewRequestIdMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			reqId := uuid.New().String()
 
-			contextWithReqId := context.WithValue(r.Context(), REQUEST_ID_CTX_KEY, reqId)
+			contextWithReqId := context.WithValue(r.Context(), requestIdCtxKey{}, reqId)
 			requestWithReqId := r.WithContext(contextWithReqId)
 
 			w.Header().Add(REQUEST_ID_HEADER, reqId)
@@ -28,8 +27,8 @@ func NewRequestIdMiddleware() func(http.Handler) http.Handler {
 }
 
 func GetRequestIdFromRequest(r *http.Request) string {
-	reqId := r.Context().Value(REQUEST_ID_CTX_KEY).(string)
-	if reqId == "" {
+	reqId, ok := r.Context().Value(requestIdCtxKey{}).(string)
+	if !ok {
 		return "undef"
 	}
 

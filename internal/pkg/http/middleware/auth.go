@@ -12,7 +12,8 @@ import (
 )
 
 const API_KEY_HEADER = "X-Api-Key"
-const USER_CTX_KEY = "user"
+
+type userCtxKey struct{}
 
 func NewAuthMiddleware(userUseCase user.UseCase) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -30,7 +31,7 @@ func NewAuthMiddleware(userUseCase user.UseCase) func(http.Handler) http.Handler
 				}
 			}
 
-			contextWithUser := context.WithValue(r.Context(), USER_CTX_KEY, user)
+			contextWithUser := context.WithValue(r.Context(), userCtxKey{}, user)
 			requestWithUser := r.WithContext(contextWithUser)
 
 			next.ServeHTTP(w, requestWithUser)
@@ -39,8 +40,8 @@ func NewAuthMiddleware(userUseCase user.UseCase) func(http.Handler) http.Handler
 }
 
 func GetUserFromRequest(r *http.Request) (*models.User, error) {
-	user := r.Context().Value(USER_CTX_KEY).(*models.User)
-	if (user == nil || *user == models.User{}) {
+	user, ok := r.Context().Value(userCtxKey{}).(*models.User)
+	if !ok {
 		return nil, appErrors.Unauthorized
 	}
 
