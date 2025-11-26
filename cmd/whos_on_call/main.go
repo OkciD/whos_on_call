@@ -56,12 +56,12 @@ func main() {
 	}
 	logger.Logger.SetLevel(logLevel)
 
-	userRepo, err := userRepositoryInmemory.New(&cfg.User.Repository)
+	userRepo, err := userRepositoryInmemory.New(logger.WithField("module", "user_repo_inmem"), &cfg.User.Repository)
 	if err != nil {
 		logrus.WithError(err).Fatalf("failed to create user repository")
 	}
 
-	userUseCase := userUseCase.New(userRepo)
+	userUseCase := userUseCase.New(logger.WithField("module", "user_usecase"), userRepo)
 
 	mux := http.NewServeMux()
 

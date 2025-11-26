@@ -6,6 +6,7 @@ import (
 	"github.com/OkciD/whos_on_call/internal/app/models"
 	"github.com/OkciD/whos_on_call/internal/app/user"
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -17,10 +18,12 @@ type Config struct {
 }
 
 type Repository struct {
+	logger *logrus.Entry
+
 	storage map[uuid.UUID]*models.User
 }
 
-func New(config *Config) (user.Repository, error) {
+func New(logger *logrus.Entry, config *Config) (user.Repository, error) {
 	storage := make(map[uuid.UUID]*models.User, len(config.Users))
 	for _, u := range config.Users {
 		uid, err := uuid.Parse(u.UID)
@@ -35,6 +38,8 @@ func New(config *Config) (user.Repository, error) {
 	}
 
 	return &Repository{
+		logger: logger,
+
 		storage: storage,
 	}, nil
 }
