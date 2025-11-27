@@ -13,12 +13,15 @@ import (
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
 	"github.com/sirupsen/logrus"
 
+	"github.com/pressly/goose/v3"
+
 	_ "github.com/mattn/go-sqlite3"
 
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 )
 
@@ -80,6 +83,17 @@ func main() {
 	cancel()
 
 	logger.Info("ping db successfully")
+
+	goose.SetBaseFS(migrations.EmbedMigrations)
+
+	if err := goose.SetDialect("sqlite3"); err != nil {
+		logger.WithError(err).Fatal("error setting goose dialect")
+	}
+
+	if err := goose.Up(db, "."); err != nil {
+		logger.WithError(err).Fatal("failed to apply migrations")
+	}
+	logger.Info("migrations applied")
 
 	userRepo, err := userRepositoryInmemory.New(logger.WithField("module", "user_repo_inmem"), &cfg.User.Repository)
 	if err != nil {

@@ -30,3 +30,7 @@ fmt:
 .PHONY: db/create
 db/create:
 	sqlite3 $(LOCAL_DB_PATH) "VACUUM;"
+
+.PHONY: db/create_migration
+db/create_migration:
+	GOOSE_MIGRATION_DIR=$(ROOT_PATH)/internal/pkg/db/migrations goose sqlite3 $(LOCAL_DB_PATH) create $(name) sql
