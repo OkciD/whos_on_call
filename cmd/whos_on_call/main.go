@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"database/sql"
 	"flag"
 	"fmt"
 	"log"
@@ -10,6 +12,8 @@ import (
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
 	"github.com/sirupsen/logrus"
+
+	_ "github.com/mattn/go-sqlite3"
 
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
@@ -56,9 +60,30 @@ func main() {
 	}
 	logger.Logger.SetLevel(logLevel)
 
+	db, err := sql.Open("sqlite3", cfg.DB.DSN)
+	if err != nil {
+		logger.WithError(err).WithField("dsn", cfg.DB.DSN).Fatal("failed to open db")
+	}
+	defer db.Close()
+
+	logger.Info("open db successfully")
+
+	db.SetMaxOpenConns(cfg.DB.MaxOpenConns)
+	db.SetMaxIdleConns(cfg.DB.MaxIdleConns)
+	db.SetConnMaxLifetime(cfg.DB.ConnMaxLifetime.Duration)
+	db.SetConnMaxIdleTime(cfg.DB.ConnMaxIdleTime.Duration)
+
+	pingCtx, cancel := context.WithTimeout(context.Background(), cfg.DB.PingTimeout.Duration)
+	if err := db.PingContext(pingCtx); err != nil {
+		logger.WithError(err).Fatal("unable to connect to database")
+	}
+	cancel()
+
+	logger.Info("ping db successfully")
+
 	userRepo, err := userRepositoryInmemory.New(logger.WithField("module", "user_repo_inmem"), &cfg.User.Repository)
 	if err != nil {
-		logrus.WithError(err).Fatalf("failed to create user repository")
+		logger.WithError(err).Fatalf("failed to create user repository")
 	}
 
 	userUseCase := userUseCase.New(logger.WithField("module", "user_usecase"), userRepo)
@@ -77,6 +102,6 @@ func main() {
 	logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
 	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
 	if err != nil {
-		logrus.WithError(err).Fatalf("http server error")
+		logger.WithError(err).Fatalf("http server error")
 	}
 }

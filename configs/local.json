@@ -6,6 +6,14 @@
         "level": "trace",
         "format": "text"
     },
+    "db": {
+        "dsn": "file:build/dev/db/db.sqlite3",
+        "maxIdleConns": 2,
+        "maxOpenConns": 3,
+        "connMaxLifetime": "5m",
+        "connMaxIdleTime": "3m",
+        "pingTimeout": "1s"
+    },
     "user": {
         "repository": {
             "users": [

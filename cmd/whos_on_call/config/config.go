@@ -2,6 +2,7 @@ package config
 
 import (
 	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
+	"github.com/OkciD/whos_on_call/internal/pkg/duration"
 )
 
 type LogFormat string
@@ -20,6 +21,15 @@ type Config struct {
 		Level  string    `json:"level"`
 		Format LogFormat `json:"format"`
 	} `json:"logger"`
+
+	DB struct {
+		DSN             string                        `json:"dsn"`
+		MaxIdleConns    int                           `json:"maxIdleConns"`
+		MaxOpenConns    int                           `json:"maxOpenConns"`
+		ConnMaxLifetime duration.MarshallableDuration `json:"connMaxLifetime"`
+		ConnMaxIdleTime duration.MarshallableDuration `json:"connMaxIdleTime"`
+		PingTimeout     duration.MarshallableDuration `json:"pingTimeout"`
+	} `json:"db"`
 
 	User struct {
 		Repository UserRepositoryInmemory.Config `json:"repository"`

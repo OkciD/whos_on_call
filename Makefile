@@ -1,5 +1,6 @@
 ROOT_PATH := $(PWD)
 BIN_PATH := $(ROOT_PATH)/build/bin
+LOCAL_DB_PATH := $(ROOT_PATH)/build/dev/db/db.sqlite3
 
 .PHONY: build
 build: build/bin/whos_on_call
@@ -25,3 +26,7 @@ tidy:
 .PHONY: fmt
 fmt:
 	go fmt ./...
+
+.PHONY: db/create
+db/create:
+	sqlite3 $(LOCAL_DB_PATH) "VACUUM;"
