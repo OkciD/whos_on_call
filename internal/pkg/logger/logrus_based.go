@@ -24,6 +24,10 @@ func (l logrusBasedLogger) WithError(err error) Logger {
 	return logrusBasedLogger{entry: l.entry.WithError(err)}
 }
 
+func (l logrusBasedLogger) ForModule(moduleName string) Logger {
+	return l.WithField("module", moduleName)
+}
+
 func (l logrusBasedLogger) WithContext(ctx context.Context) Logger {
 	return l.WithFields(getFieldsFromContext(ctx))
 }

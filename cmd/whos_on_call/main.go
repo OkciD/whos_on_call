@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"flag"
 	"fmt"
 	"log"
@@ -18,12 +16,10 @@ import (
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 	"github.com/OkciD/whos_on_call/internal/pkg/logger"
-	"github.com/OkciD/whos_on_call/internal/pkg/logger/sqldblogger_adapter"
-
-	sqldblogger "github.com/simukti/sqldb-logger"
 )
 
 func main() {
@@ -42,41 +38,15 @@ func main() {
 
 	logger := logger.NewLogrusBasedLogger(&cfg.Logger)
 
-	db, err := sql.Open("sqlite3", cfg.DB.DSN)
+	db, err := db.NewDBConnection(logger, &cfg.DB)
 	if err != nil {
-		logger.WithError(err).WithField("dsn", cfg.DB.DSN).Fatal("failed to open db")
+		logger.WithError(err).Fatal("db connection failed")
 	}
 	defer db.Close()
 
-	logger.Info("open db successfully")
-
-	loggerAdapter := sqldblogger_adapter.New(logger)
-	db = sqldblogger.OpenDriver(
-		cfg.DB.DSN,
-		db.Driver(),
-		loggerAdapter,
-		sqldblogger.WithTimeFormat(sqldblogger.TimeFormatRFC3339),
-		sqldblogger.WithExecerLevel(sqldblogger.LevelDebug),
-		sqldblogger.WithQueryerLevel(sqldblogger.LevelDebug),
-		sqldblogger.WithPreparerLevel(sqldblogger.LevelDebug),
-	)
-
-	db.SetMaxOpenConns(cfg.DB.MaxOpenConns)
-	db.SetMaxIdleConns(cfg.DB.MaxIdleConns)
-	db.SetConnMaxLifetime(cfg.DB.ConnMaxLifetime.Duration)
-	db.SetConnMaxIdleTime(cfg.DB.ConnMaxIdleTime.Duration)
-
-	pingCtx, cancel := context.WithTimeout(context.Background(), cfg.DB.PingTimeout.Duration)
-	if err := db.PingContext(pingCtx); err != nil {
-		logger.WithError(err).Fatal("unable to connect to database")
-	}
-	cancel()
-
-	logger.Info("ping db successfully")
-
 	goose.SetBaseFS(migrations.EmbedMigrations)
 
-	if err := goose.SetDialect("sqlite3"); err != nil {
+	if err := goose.SetDialect(cfg.DB.Driver); err != nil {
 		logger.WithError(err).Fatal("error setting goose dialect")
 	}
 
@@ -85,9 +55,9 @@ func main() {
 	}
 	logger.Info("migrations applied")
 
-	userRepo := userRepositorySqlite.New(logger.WithField("module", "user_repo"), db)
+	userRepo := userRepositorySqlite.New(logger.ForModule("user_repo"), db)
 
-	userUseCase := userUseCase.New(logger.WithField("module", "user_usecase"), userRepo)
+	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
 
 	mux := http.NewServeMux()
 

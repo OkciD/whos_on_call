@@ -16,6 +16,7 @@ type Logger interface {
 	WithFields(fields Fields) Logger
 	WithError(err error) Logger
 	WithContext(ctx context.Context) Logger
+	ForModule(moduleName string) Logger
 
 	Trace(msg string)
 	Debug(msg string)

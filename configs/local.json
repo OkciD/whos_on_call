@@ -7,6 +7,7 @@
         "format": "text"
     },
     "db": {
+        "driver": "sqlite3",
         "dsn": "file:build/dev/db/db.sqlite3",
         "maxIdleConns": 2,
         "maxOpenConns": 3,
