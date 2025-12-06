@@ -63,12 +63,14 @@ func main() {
 
 	userHttpDelivery.New(mux, userUseCase)
 
-	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
-	requestIdMiddleWare := middleware.NewRequestIdMiddleware()
-	accessLogMiddleware := middleware.NewAccessLogMiddleware(logger)
-	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
-
-	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(accessLogMiddleware(authMiddleware(mux))))
+	wrappedMux := middleware.ApplyMiddlewares(
+		mux,
+		middleware.NewAuthMiddleware(userUseCase),
+		middleware.NewAccessLogMiddleware(logger),
+		middleware.NewRequestIdMiddleware(),
+		middleware.NewContentTypeMiddleware("application/json"),
+		middleware.NewRecoveryMiddleware(logger),
+	)
 
 	logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
 	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
