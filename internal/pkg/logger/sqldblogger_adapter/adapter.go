@@ -17,7 +17,7 @@ func New(logger logger.Logger) sqldblogger.Logger {
 }
 
 func (l *loggerAdapter) Log(ctx context.Context, level sqldblogger.Level, msg string, data map[string]any) {
-	logger := l.logger.WithFields(data)
+	logger := l.logger.WithContext(ctx).WithFields(data)
 
 	switch level {
 	case sqldblogger.LevelError:

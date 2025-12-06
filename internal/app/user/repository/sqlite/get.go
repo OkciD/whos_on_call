@@ -17,8 +17,6 @@ func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appMo
 	hasher.Write([]byte(apiKey))
 	hashedApiKey := hex.EncodeToString(hasher.Sum(nil))
 
-	r.logger.WithField("api_key_hash", hashedApiKey).Trace("lookup user by api key")
-
 	user := dbModels.User{}
 
 	row := r.db.QueryRowContext(ctx, "SELECT id, name FROM users WHERE api_key_hash = ?", hashedApiKey)

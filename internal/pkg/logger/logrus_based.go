@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"os"
 	"time"
 
@@ -21,6 +22,10 @@ func (l logrusBasedLogger) WithFields(fields Fields) Logger {
 
 func (l logrusBasedLogger) WithError(err error) Logger {
 	return logrusBasedLogger{entry: l.entry.WithError(err)}
+}
+
+func (l logrusBasedLogger) WithContext(ctx context.Context) Logger {
+	return l.WithFields(getFieldsFromContext(ctx))
 }
 
 func (l logrusBasedLogger) Trace(msg string) {
