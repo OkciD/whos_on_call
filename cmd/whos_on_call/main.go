@@ -18,7 +18,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
-	userRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
+	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
@@ -95,7 +95,7 @@ func main() {
 	}
 	logger.Info("migrations applied")
 
-	userRepo, err := userRepositoryInmemory.New(logger.WithField("module", "user_repo_inmem"), &cfg.User.Repository)
+	userRepo, err := userRepositorySqlite.New(logger.WithField("module", "user_repo"), db)
 	if err != nil {
 		logger.WithError(err).Fatalf("failed to create user repository")
 	}

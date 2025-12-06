@@ -1,7 +1,6 @@
 package config
 
 import (
-	UserRepositoryInmemory "github.com/OkciD/whos_on_call/internal/app/user/repository/inmemory"
 	"github.com/OkciD/whos_on_call/internal/pkg/duration"
 )
 
@@ -30,10 +29,6 @@ type Config struct {
 		ConnMaxIdleTime duration.MarshallableDuration `json:"connMaxIdleTime"`
 		PingTimeout     duration.MarshallableDuration `json:"pingTimeout"`
 	} `json:"db"`
-
-	User struct {
-		Repository UserRepositoryInmemory.Config `json:"repository"`
-	} `json:"user"`
 }
 
 func (c *Config) GetLogFormat() LogFormat {

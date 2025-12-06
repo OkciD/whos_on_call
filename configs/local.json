@@ -13,16 +13,5 @@
         "connMaxLifetime": "5m",
         "connMaxIdleTime": "3m",
         "pingTimeout": "1s"
-    },
-    "user": {
-        "repository": {
-            "users": [
-                {
-                    "uid": "0bb8134f-87a1-4531-8417-349adec70187",
-                    "name": "John Doe",
-                    "apiKey": "DR4tMRGbG9XKvyi8sCmHiaRL8ayfrv45"
-                }
-            ]
-        }
     }
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type ApiUser struct {
-	UID  string `json:"uid"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -18,7 +18,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	// todo: respond ok tool
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(ApiUser{
-		UID:  user.UID.String(),
+		ID:   user.ID,
 		Name: user.Name,
 	})
 }
