@@ -13,10 +13,10 @@ type Repository struct {
 	db *sql.DB
 }
 
-func New(logger *logrus.Entry, db *sql.DB) (user.Repository, error) {
+func New(logger *logrus.Entry, db *sql.DB) user.Repository {
 	return &Repository{
 		logger: logger,
 
 		db: db,
-	}, nil
+	}
 }

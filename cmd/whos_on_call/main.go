@@ -23,6 +23,9 @@ import (
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
+
+	sqldblogger "github.com/simukti/sqldb-logger"
+	"github.com/simukti/sqldb-logger/logadapter/logrusadapter"
 )
 
 func main() {
@@ -39,20 +42,15 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to read config: %w", err))
 	}
 
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unk"
-	}
-
-	logger := logrus.WithField("host", hostname)
+	logger := logrus.New()
 
 	if cfg.GetLogFormat() == config.LogFormatText {
-		logger.Logger.SetFormatter(&logrus.TextFormatter{
+		logger.SetFormatter(&logrus.TextFormatter{
 			FullTimestamp:   true,
 			TimestampFormat: time.RFC3339,
 		})
 	} else {
-		logger.Logger.SetFormatter(&logrus.JSONFormatter{
+		logger.SetFormatter(&logrus.JSONFormatter{
 			TimestampFormat: time.RFC3339,
 		})
 	}
@@ -61,7 +59,13 @@ func main() {
 	if err != nil {
 		logLevel = logrus.InfoLevel
 	}
-	logger.Logger.SetLevel(logLevel)
+	logger.SetLevel(logLevel)
+
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostname = "unk"
+	}
+	logEntry := logger.WithField("host", hostname)
 
 	db, err := sql.Open("sqlite3", cfg.DB.DSN)
 	if err != nil {
@@ -70,6 +74,17 @@ func main() {
 	defer db.Close()
 
 	logger.Info("open db successfully")
+
+	loggerAdapter := logrusadapter.New(logger)
+	db = sqldblogger.OpenDriver(
+		cfg.DB.DSN,
+		db.Driver(),
+		loggerAdapter,
+		sqldblogger.WithTimeFormat(sqldblogger.TimeFormatRFC3339),
+		sqldblogger.WithExecerLevel(sqldblogger.LevelDebug),
+		sqldblogger.WithQueryerLevel(sqldblogger.LevelDebug),
+		sqldblogger.WithPreparerLevel(sqldblogger.LevelDebug),
+	)
 
 	db.SetMaxOpenConns(cfg.DB.MaxOpenConns)
 	db.SetMaxIdleConns(cfg.DB.MaxIdleConns)
@@ -95,12 +110,9 @@ func main() {
 	}
 	logger.Info("migrations applied")
 
-	userRepo, err := userRepositorySqlite.New(logger.WithField("module", "user_repo"), db)
-	if err != nil {
-		logger.WithError(err).Fatalf("failed to create user repository")
-	}
+	userRepo := userRepositorySqlite.New(logEntry.WithField("module", "user_repo"), db)
 
-	userUseCase := userUseCase.New(logger.WithField("module", "user_usecase"), userRepo)
+	userUseCase := userUseCase.New(logEntry.WithField("module", "user_usecase"), userRepo)
 
 	mux := http.NewServeMux()
 
@@ -108,7 +120,7 @@ func main() {
 
 	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
 	requestIdMiddleWare := middleware.NewRequestIdMiddleware()
-	accessLogMiddleware := middleware.NewAccessLogMiddleware(logger)
+	accessLogMiddleware := middleware.NewAccessLogMiddleware(logEntry)
 	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
 
 	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(accessLogMiddleware(authMiddleware(mux))))
