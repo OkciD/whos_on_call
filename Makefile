@@ -1,6 +1,7 @@
-ROOT_PATH := $(PWD)
-BIN_PATH := $(ROOT_PATH)/build/bin
-LOCAL_DB_PATH := $(ROOT_PATH)/build/dev/db/db.sqlite3
+ROOT_DIR := $(PWD)
+BIN_DIR := $(ROOT_DIR)/build/bin
+LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
+LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 
 .PHONY: build
 build: build/bin/whos_on_call
@@ -10,11 +11,11 @@ build/bin/whos_on_call:
 
 .PHONY: clean
 clean:
-	rm -f $(BIN_PATH)/*
+	rm -f $(BIN_DIR)/*
 
 .PHONY: run
 run: clean build
-	$(BIN_PATH)/whos_on_call -config=$(ROOT_PATH)/configs/local.json
+	$(BIN_DIR)/whos_on_call -config=$(ROOT_DIR)/configs/local.json
 
 .PHONY: start
 start: run
@@ -33,4 +34,8 @@ db/create:
 
 .PHONY: db/create_migration
 db/create_migration:
-	GOOSE_MIGRATION_DIR=$(ROOT_PATH)/internal/pkg/db/migrations goose sqlite3 $(LOCAL_DB_PATH) create $(name) sql
+	GOOSE_MIGRATION_DIR=$(ROOT_DIR)/internal/pkg/db/migrations goose sqlite3 $(LOCAL_DB_PATH) create $(name) sql
+
+.PHONY: db/populate
+db/populate:
+	sqlite3 $(LOCAL_DB_PATH) < $(LOCAL_DB_DIR)/test_data.sql
