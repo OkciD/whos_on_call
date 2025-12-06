@@ -2,16 +2,16 @@ package usecase
 
 import (
 	"github.com/OkciD/whos_on_call/internal/app/user"
-	"github.com/sirupsen/logrus"
+	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
 type UseCase struct {
-	logger *logrus.Entry
+	logger logger.Logger
 
 	userRepo user.Repository
 }
 
-func New(logger *logrus.Entry, userRepo user.Repository) user.UseCase {
+func New(logger logger.Logger, userRepo user.Repository) user.UseCase {
 	return &UseCase{
 		logger: logger,
 

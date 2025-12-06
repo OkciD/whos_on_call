@@ -7,11 +7,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"time"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
-	"github.com/sirupsen/logrus"
 
 	"github.com/pressly/goose/v3"
 
@@ -23,9 +20,10 @@ import (
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
+	"github.com/OkciD/whos_on_call/internal/pkg/logger"
+	"github.com/OkciD/whos_on_call/internal/pkg/logger/sqldblogger_adapter"
 
 	sqldblogger "github.com/simukti/sqldb-logger"
-	"github.com/simukti/sqldb-logger/logadapter/logrusadapter"
 )
 
 func main() {
@@ -42,30 +40,7 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to read config: %w", err))
 	}
 
-	logger := logrus.New()
-
-	if cfg.GetLogFormat() == config.LogFormatText {
-		logger.SetFormatter(&logrus.TextFormatter{
-			FullTimestamp:   true,
-			TimestampFormat: time.RFC3339,
-		})
-	} else {
-		logger.SetFormatter(&logrus.JSONFormatter{
-			TimestampFormat: time.RFC3339,
-		})
-	}
-
-	logLevel, err := logrus.ParseLevel(string(cfg.Logger.Level))
-	if err != nil {
-		logLevel = logrus.InfoLevel
-	}
-	logger.SetLevel(logLevel)
-
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostname = "unk"
-	}
-	logEntry := logger.WithField("host", hostname)
+	logger := logger.NewLogrusBasedLogger(&cfg.Logger)
 
 	db, err := sql.Open("sqlite3", cfg.DB.DSN)
 	if err != nil {
@@ -75,7 +50,7 @@ func main() {
 
 	logger.Info("open db successfully")
 
-	loggerAdapter := logrusadapter.New(logger)
+	loggerAdapter := sqldblogger_adapter.New(logger)
 	db = sqldblogger.OpenDriver(
 		cfg.DB.DSN,
 		db.Driver(),
@@ -110,9 +85,9 @@ func main() {
 	}
 	logger.Info("migrations applied")
 
-	userRepo := userRepositorySqlite.New(logEntry.WithField("module", "user_repo"), db)
+	userRepo := userRepositorySqlite.New(logger.WithField("module", "user_repo"), db)
 
-	userUseCase := userUseCase.New(logEntry.WithField("module", "user_usecase"), userRepo)
+	userUseCase := userUseCase.New(logger.WithField("module", "user_usecase"), userRepo)
 
 	mux := http.NewServeMux()
 
@@ -120,7 +95,7 @@ func main() {
 
 	contentTypeMiddleware := middleware.NewContentTypeMiddleware("application/json")
 	requestIdMiddleWare := middleware.NewRequestIdMiddleware()
-	accessLogMiddleware := middleware.NewAccessLogMiddleware(logEntry)
+	accessLogMiddleware := middleware.NewAccessLogMiddleware(logger)
 	authMiddleware := middleware.NewAuthMiddleware(userUseCase)
 
 	wrappedMux := contentTypeMiddleware(requestIdMiddleWare(accessLogMiddleware(authMiddleware(mux))))
@@ -128,6 +103,6 @@ func main() {
 	logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
 	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
 	if err != nil {
-		logger.WithError(err).Fatalf("http server error")
+		logger.WithError(err).Fatal("http server error")
 	}
 }

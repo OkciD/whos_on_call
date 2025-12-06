@@ -2,13 +2,7 @@ package config
 
 import (
 	"github.com/OkciD/whos_on_call/internal/pkg/duration"
-)
-
-type LogFormat string
-
-const (
-	LogFormatJson LogFormat = "json"
-	LogFormatText LogFormat = "text"
+	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
 type Config struct {
@@ -16,10 +10,7 @@ type Config struct {
 		ListenAddr string `json:"listenAddr"`
 	} `json:"server"`
 
-	Logger struct {
-		Level  string    `json:"level"`
-		Format LogFormat `json:"format"`
-	} `json:"logger"`
+	Logger logger.Config `json:"logger"`
 
 	DB struct {
 		DSN             string                        `json:"dsn"`
@@ -29,12 +20,4 @@ type Config struct {
 		ConnMaxIdleTime duration.MarshallableDuration `json:"connMaxIdleTime"`
 		PingTimeout     duration.MarshallableDuration `json:"pingTimeout"`
 	} `json:"db"`
-}
-
-func (c *Config) GetLogFormat() LogFormat {
-	if c.Logger.Format == "" {
-		return LogFormatJson
-	}
-
-	return c.Logger.Format
 }

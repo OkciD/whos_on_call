@@ -3,10 +3,11 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/sirupsen/logrus"
 )
 
-func NewAccessLogMiddleware(logger *logrus.Entry) func(http.Handler) http.Handler {
+func NewAccessLogMiddleware(logger logger.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var (

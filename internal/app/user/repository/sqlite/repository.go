@@ -4,16 +4,16 @@ import (
 	"database/sql"
 
 	"github.com/OkciD/whos_on_call/internal/app/user"
-	"github.com/sirupsen/logrus"
+	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
 type Repository struct {
-	logger *logrus.Entry
+	logger logger.Logger
 
 	db *sql.DB
 }
 
-func New(logger *logrus.Entry, db *sql.DB) user.Repository {
+func New(logger logger.Logger, db *sql.DB) user.Repository {
 	return &Repository{
 		logger: logger,
 
