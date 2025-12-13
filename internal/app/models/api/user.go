@@ -1,11 +1,10 @@
-package db
+package api
 
 import appModels "github.com/OkciD/whos_on_call/internal/app/models"
 
 type User struct {
-	ID         int
-	Name       string
-	ApiKeyHash string
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func (u *User) ToAppModel() *appModels.User {
