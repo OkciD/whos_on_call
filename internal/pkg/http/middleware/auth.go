@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/app/models"
@@ -22,13 +21,8 @@ func NewAuthMiddleware(userUseCase user.UseCase) func(http.Handler) http.Handler
 
 			user, err := userUseCase.GetUserByApiKey(r.Context(), apiKey)
 			if err != nil {
-				if errors.Is(err, appErrors.ErrUserNotFound) {
-					httpErrors.RespondWithError(w, "unauthorized", http.StatusUnauthorized)
-					return
-				} else {
-					httpErrors.RespondWithError(w, "internal", http.StatusInternalServerError)
-					return
-				}
+				httpErrors.MapErrorToResponse(w, err)
+				return
 			}
 
 			contextWithUser := context.WithValue(r.Context(), userCtxKey{}, user)
@@ -42,7 +36,7 @@ func NewAuthMiddleware(userUseCase user.UseCase) func(http.Handler) http.Handler
 func GetUserFromRequest(r *http.Request) (*models.User, error) {
 	user, ok := r.Context().Value(userCtxKey{}).(*models.User)
 	if !ok {
-		return nil, appErrors.Unauthorized
+		return nil, appErrors.ErrUnauthorized
 	}
 
 	return user, nil

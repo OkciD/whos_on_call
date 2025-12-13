@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/app/user"
+	"github.com/OkciD/whos_on_call/internal/pkg/http/handler"
 )
 
 type UserHandler struct {
@@ -15,10 +16,8 @@ func New(mux *http.ServeMux, userUseCase user.UseCase) *UserHandler {
 		userUseCase: userUseCase,
 	}
 
-	mux.Handle("/api/v1/user", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			h.GetUser(w, r)
-		}
+	mux.Handle("/api/v1/user", handler.GenericHandler(map[string]handler.Handler{
+		http.MethodGet: h.GetUser,
 	}))
 
 	return h

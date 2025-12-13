@@ -68,7 +68,6 @@ func main() {
 		middleware.NewAuthMiddleware(userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
 		middleware.NewRequestIdMiddleware(),
-		middleware.NewContentTypeMiddleware("application/json"),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 
