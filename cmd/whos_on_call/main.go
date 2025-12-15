@@ -61,11 +61,11 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	userHttpDelivery.New(mux, userUseCase)
+	userHttpDelivery.New(mux, logger.ForModule("user_handler"), userUseCase)
 
 	wrappedMux := middleware.ApplyMiddlewares(
 		mux,
-		middleware.NewAuthMiddleware(userUseCase),
+		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
 		middleware.NewRequestIdMiddleware(),
 		middleware.NewRecoveryMiddleware(logger),

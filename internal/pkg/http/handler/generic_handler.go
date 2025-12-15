@@ -1,50 +1,42 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 
 	appErrors "github.com/OkciD/whos_on_call/internal/pkg/errors"
-	httpErrors "github.com/OkciD/whos_on_call/internal/pkg/http/errors"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
-type SuccessResponse struct {
-	Status *int
-	Body   any
-}
+type ResponseWriter func(w http.ResponseWriter) error
 
-type Handler func(r *http.Request) (SuccessResponse, error)
+type Handler func(r *http.Request) (ResponseWriter, error)
 
-func GenericHandler(handlers map[string]Handler) http.Handler {
+func GenericHandler(logger loggerPkg.Logger, handlers map[string]Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "application/json")
-
 		handler, ok := handlers[r.Method]
 		if !ok {
-			httpErrors.MapErrorToResponse(w, appErrors.ErrNotFound)
+			logger.WithFields(loggerPkg.Fields{
+				"method":     r.Method,
+				"requestURI": r.RequestURI,
+			}).Error("handler not found")
+
+			RespondJSONError(w, appErrors.ErrNotImplemented)
+
 			return
 		}
 
-		response, err := handler(r)
+		responseWriter, err := handler(r)
 		if err != nil {
-			httpErrors.MapErrorToResponse(w, err)
+			logger.WithError(err).Error("error returned from handler")
+			RespondJSONError(w, err)
 			return
 		}
 
-		// todo: support redirects
-
-		if response.Status != nil {
-			w.WriteHeader(*response.Status)
-		} else {
-			w.WriteHeader(http.StatusOK)
-		}
-
-		if response.Body != nil {
-			err = json.NewEncoder(w).Encode(response.Body)
-			if err != nil {
-				httpErrors.MapErrorToResponse(w, err)
-				return
-			}
+		err = responseWriter(w)
+		if err != nil {
+			logger.WithError(err).Error("error returned from response writer")
+			RespondJSONError(w, err)
+			return
 		}
 	})
 }

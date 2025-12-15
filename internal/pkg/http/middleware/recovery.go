@@ -6,7 +6,7 @@ import (
 	"runtime/debug"
 
 	appErrors "github.com/OkciD/whos_on_call/internal/pkg/errors"
-	httpErrors "github.com/OkciD/whos_on_call/internal/pkg/http/errors"
+	"github.com/OkciD/whos_on_call/internal/pkg/http/handler"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
@@ -20,7 +20,7 @@ func NewRecoveryMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Hand
 						"stack": string(debug.Stack()),
 					}).Error("panic occurred")
 
-					httpErrors.MapErrorToResponse(w, appErrors.ErrInternal)
+					handler.RespondJSONError(w, appErrors.ErrInternal)
 				}
 			}()
 

@@ -9,13 +9,11 @@ import (
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 )
 
-func (h *UserHandler) GetUser(r *http.Request) (handler.SuccessResponse, error) {
+func (h *UserHandler) GetUser(r *http.Request) (handler.ResponseWriter, error) {
 	user, err := middleware.GetUserFromRequest(r)
 	if err != nil {
-		return handler.SuccessResponse{}, fmt.Errorf("failed to get user from request: %w", err)
+		return nil, fmt.Errorf("failed to get user from request: %w", err)
 	}
 
-	return handler.SuccessResponse{
-		Body: api.FromUserAppModel(user),
-	}, nil
+	return handler.RespondJSON(api.FromUserAppModel(user)), nil
 }
