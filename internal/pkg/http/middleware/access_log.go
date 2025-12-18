@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/OkciD/whos_on_call/internal/pkg/context"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
@@ -13,7 +14,7 @@ func NewAccessLogMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Han
 				ip     = r.RemoteAddr
 				method = r.Method
 				url    = r.URL.String()
-				reqId  = GetRequestIdFromRequest(r)
+				reqId  = context.GetRequestId(r.Context())
 			)
 
 			logger.WithFields(loggerPkg.Fields{

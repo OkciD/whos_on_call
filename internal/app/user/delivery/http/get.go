@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/app/models/api"
+	appContext "github.com/OkciD/whos_on_call/internal/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/handler"
-	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 )
 
 func (h *UserHandler) GetUser(r *http.Request) (handler.ResponseWriter, error) {
-	user, err := middleware.GetUserFromRequest(r)
+	user, err := appContext.GetUser(r.Context())
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)
 	}
