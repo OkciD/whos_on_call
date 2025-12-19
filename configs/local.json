@@ -1,6 +1,7 @@
 {
     "server": {
-        "listenAddr": ":8080"
+        "listenAddr": ":8080",
+        "shutdownTimeout": "10s"
     },
     "logger": {
         "level": "trace",

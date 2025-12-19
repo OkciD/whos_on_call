@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/OkciD/whos_on_call/cmd/whos_on_call/config"
 
@@ -42,7 +47,10 @@ func main() {
 	if err != nil {
 		logger.WithError(err).Fatal("db connection failed")
 	}
-	defer db.Close()
+	defer func() {
+		logger.Info("closing db connection")
+		db.Close()
+	}()
 
 	goose.SetBaseFS(migrations.EmbedMigrations)
 
@@ -71,9 +79,34 @@ func main() {
 		middleware.NewRecoveryMiddleware(logger),
 	)
 
-	logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
-	err = http.ListenAndServe(cfg.Server.ListenAddr, wrappedMux)
-	if err != nil {
-		logger.WithError(err).Fatal("http server error")
+	server := http.Server{
+		Addr:    cfg.Server.ListenAddr,
+		Handler: wrappedMux,
 	}
+
+	go func() {
+		logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
+
+		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+			logger.WithError(err).Fatal("HTTP server error")
+		}
+		logger.Info("stopped serving new connections")
+	}()
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	<-sigChan
+
+	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout.Duration)
+	defer shutdownRelease()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		logger.WithError(err).Warn("HTTP shutdown error, trying force close")
+
+		if err = server.Close(); err != nil {
+			logger.WithError(err).Fatal("HTTP close error")
+		}
+	}
+
+	logger.Info("graceful shutdown complete")
 }
