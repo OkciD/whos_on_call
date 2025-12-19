@@ -4,7 +4,9 @@ CREATE TABLE IF NOT EXISTS devices (
     id INTEGER PRIMARY KEY,
     name VARCHAR(256) NOT NULL,
     type INT8 NOT NULL,
-    user_id INTEGER REFERENCES users(id)
+    user_id INTEGER REFERENCES users(id),
+
+    UNIQUE(user_id, name)
 );
 
 CREATE INDEX IF NOT EXISTS idx_devices_user_id ON devices (user_id);
