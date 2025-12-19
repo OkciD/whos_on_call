@@ -2,23 +2,24 @@ package models
 
 import "time"
 
-type DeviceFeatureType string
+type DeviceFeatureType int8
 
 const (
-	DeviceFeatureTypeMic    DeviceFeatureType = "mic"
-	DeviceFeatureTypeCamera DeviceFeatureType = "camera"
+	DeviceFeatureTypeMic DeviceFeatureType = iota
+	DeviceFeatureTypeCamera
 )
 
-type DeviceFeatureStatus string
+type DeviceFeatureStatus int8
 
 const (
-	DeviceFeatureStatusActive   DeviceFeatureStatus = "active"
-	DeviceFeatureStatusInactive DeviceFeatureStatus = "inactive"
+	DeviceFeatureStatusInactive DeviceFeatureStatus = iota
+	DeviceFeatureStatusActive
 )
 
 type DeviceFeature struct {
-	Device       *Device
+	ID           int
 	Type         DeviceFeatureType
 	Status       DeviceFeatureStatus
-	LastModified time.Time
+	LastModified *time.Time
+	// Device       *Device
 }

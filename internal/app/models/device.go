@@ -1,18 +1,16 @@
 package models
 
-import "github.com/google/uuid"
-
-type DeviceType string
+type DeviceType int8
 
 const (
-	DeviceTypePC     DeviceType = "pc"
-	DeviceTypeLaptop DeviceType = "laptop"
-	DeviceTypeMobile DeviceType = "mobile"
+	DeviceTypeLaptop DeviceType = iota
+	DeviceTypeMobile
+	DeviceTypePC
 )
 
 type Device struct {
-	UID  uuid.UUID
+	ID   int
 	Name string
 	Type DeviceType
-	User *User
+	// User *User
 }
