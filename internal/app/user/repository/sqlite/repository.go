@@ -1,4 +1,4 @@
-package inmemory
+package sqlite
 
 import (
 	"database/sql"
