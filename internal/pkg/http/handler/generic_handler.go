@@ -13,6 +13,8 @@ type Handler func(r *http.Request) (ResponseWriter, error)
 
 func GenericHandler(logger loggerPkg.Logger, handlers map[string]Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := logger.WithContext(r.Context())
+
 		handler, ok := handlers[r.Method]
 		if !ok {
 			logger.WithFields(loggerPkg.Fields{
