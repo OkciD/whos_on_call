@@ -10,9 +10,11 @@ var (
 	ErrNotImplemented = errors.New("not implemented")
 	ErrUnauthorized   = errors.New("unauthorized")
 	ErrInvalidJSON    = errors.New("invalid json")
+	ErrInvalidParam   = errors.New("invalid param")
 
 	ErrUserNotFound = errors.New("user not found")
 
+	ErrDeviceNotFound    = errors.New("device not found")
 	ErrDeviceTypeInvalid = errors.New("invalid device type")
 	ErrDeviceExists      = errors.New("device already exists")
 

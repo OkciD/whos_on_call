@@ -8,4 +8,5 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, newDevice *models.Device) (*models.Device, error)
+	GetById(ctx context.Context, deviceId int, user *models.User) (*models.Device, error)
 }

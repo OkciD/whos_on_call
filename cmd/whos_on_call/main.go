@@ -20,6 +20,9 @@ import (
 	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/app/device/delivery/http"
 	deviceRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/device/repository/sqlite"
 	deviceUseCase "github.com/OkciD/whos_on_call/internal/app/device/usecase"
+	deviceFeatureHttpDelivery "github.com/OkciD/whos_on_call/internal/app/devicefeature/delivery/http"
+	deviceFeatureRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/devicefeature/repository/sqlite"
+	deviceFeatureUseCase "github.com/OkciD/whos_on_call/internal/app/devicefeature/usecase"
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
@@ -68,14 +71,17 @@ func main() {
 
 	userRepo := userRepositorySqlite.New(logger.ForModule("user_repo"), db)
 	deviceRepo := deviceRepositorySqlite.New(logger.ForModule("device_repo"), db)
+	deviceFeatureRepo := deviceFeatureRepositorySqlite.New(logger.ForModule("devicefeature_repo"), db)
 
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
 	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), deviceRepo)
+	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
 
 	mux := http.NewServeMux()
 
 	userHttpDelivery.New(mux, logger.ForModule("user_handler"), userUseCase)
 	deviceHttpDelivery.New(mux, logger.ForModule("device_handler"), deviceUseCase)
+	deviceFeatureHttpDelivery.New(mux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
 
 	wrappedMux := middleware.ApplyMiddlewares(
 		mux,

@@ -24,7 +24,7 @@ func respondJSONError(w http.ResponseWriter, errCode string, status int) {
 func RespondJSONError(w http.ResponseWriter, err error) {
 	if errors.Is(err, appErrors.ErrUnauthorized) || errors.Is(err, appErrors.ErrUserNotFound) {
 		respondJSONError(w, "unauthorized", http.StatusUnauthorized)
-	} else if errors.Is(err, appErrors.ErrNotFound) {
+	} else if errors.Is(err, appErrors.ErrNotFound) || errors.Is(err, appErrors.ErrDeviceNotFound) {
 		respondJSONError(w, "not found", http.StatusNotFound)
 	} else if errors.Is(err, appErrors.ErrNotImplemented) {
 		respondJSONError(w, "not impl", http.StatusNotImplemented)

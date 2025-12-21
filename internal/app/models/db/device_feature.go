@@ -43,11 +43,10 @@ func (df *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 
 func FromDeviceFeatureAppModel(
 	appDeviceFeature *appModels.DeviceFeature,
-	appDevice *appModels.Device,
 ) (*DeviceFeature, error) {
 	dbDeviceFeature := &DeviceFeature{
 		ID:       appDeviceFeature.ID,
-		DeviceID: appDevice.ID,
+		DeviceID: appDeviceFeature.Device.ID,
 	}
 
 	switch appDeviceFeature.Type {

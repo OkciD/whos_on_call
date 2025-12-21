@@ -28,17 +28,12 @@ func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*mod
 
 		return nil, fmt.Errorf("failed to insert device: %w", err)
 	}
-	deviceID, err := result.LastInsertId()
-	if err != nil {
+
+	if deviceID, err := result.LastInsertId(); err == nil {
+		newDevice.ID = int(deviceID)
+	} else {
 		return nil, fmt.Errorf("failed to get inserted device id: %w", err)
 	}
 
-	dbNewDevice.ID = int(deviceID)
-
-	appNewDevice, err := dbNewDevice.ToAppModel()
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert inserted device model: %w", err)
-	}
-
-	return appNewDevice, nil
+	return newDevice, nil
 }
