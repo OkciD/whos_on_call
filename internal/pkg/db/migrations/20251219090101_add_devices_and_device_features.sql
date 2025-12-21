@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS device_features (
     type INT8 NOT NULL,
     status INT8 NOT NULL,
     last_modified DATETIME,
-    device_id INTEGER REFERENCES devices(id)
+    device_id INTEGER REFERENCES devices(id),
+
+    UNIQUE(device_id, type)
 );
 
 CREATE INDEX IF NOT EXISTS idx_device_feature_device_id ON device_features (device_id);

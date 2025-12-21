@@ -30,6 +30,7 @@ fmt:
 
 .PHONY: db/create
 db/create:
+	rm -f $(LOCAL_DB_PATH)
 	sqlite3 $(LOCAL_DB_PATH) "VACUUM;"
 
 .PHONY: db/create_migration
