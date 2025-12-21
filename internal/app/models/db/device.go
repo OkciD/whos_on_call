@@ -16,7 +16,6 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 	appDevice := &appModels.Device{
 		ID:   d.ID,
 		Name: d.Name,
-		Type: appModels.DeviceType(d.Type),
 	}
 
 	switch d.Type {
@@ -31,11 +30,11 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 	return appDevice, nil
 }
 
-func FromDeviceAppModel(appDevice *appModels.Device, appUser *appModels.User) (*Device, error) {
+func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 	dbDevice := &Device{
 		ID:     appDevice.ID,
 		Name:   appDevice.Name,
-		UserID: appUser.ID,
+		UserID: appDevice.User.ID,
 	}
 
 	switch appDevice.Type {

@@ -17,6 +17,9 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/app/device/delivery/http"
+	deviceRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/device/repository/sqlite"
+	deviceUseCase "github.com/OkciD/whos_on_call/internal/app/device/usecase"
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
@@ -64,12 +67,15 @@ func main() {
 	logger.Info("migrations applied")
 
 	userRepo := userRepositorySqlite.New(logger.ForModule("user_repo"), db)
+	deviceRepo := deviceRepositorySqlite.New(logger.ForModule("device_repo"), db)
 
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
+	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), deviceRepo)
 
 	mux := http.NewServeMux()
 
 	userHttpDelivery.New(mux, logger.ForModule("user_handler"), userUseCase)
+	deviceHttpDelivery.New(mux, logger.ForModule("device_handler"), deviceUseCase)
 
 	wrappedMux := middleware.ApplyMiddlewares(
 		mux,

@@ -28,6 +28,10 @@ func RespondJSONError(w http.ResponseWriter, err error) {
 		respondJSONError(w, "not found", http.StatusNotFound)
 	} else if errors.Is(err, appErrors.ErrNotImplemented) {
 		respondJSONError(w, "not impl", http.StatusNotImplemented)
+	} else if errors.Is(err, appErrors.ErrInvalidJSON) {
+		respondJSONError(w, "invalid json", http.StatusBadRequest)
+	} else if errors.Is(err, appErrors.ErrDeviceExists) {
+		respondJSONError(w, "duplicate", http.StatusBadRequest)
 	} else {
 		respondJSONError(w, "internal", http.StatusInternalServerError)
 	}

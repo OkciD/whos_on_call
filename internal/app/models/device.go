@@ -12,5 +12,5 @@ type Device struct {
 	ID   int
 	Name string
 	Type DeviceType
-	// User *User
+	User *User
 }
