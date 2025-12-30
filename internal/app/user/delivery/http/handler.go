@@ -21,9 +21,7 @@ func New(mux *http.ServeMux, logger logger.Logger, userUseCase user.UseCase) *Us
 		userUseCase: userUseCase,
 	}
 
-	mux.Handle("/api/v1/user", handler.GenericHandler(logger, map[string]handler.Handler{
-		http.MethodGet: h.GetUser,
-	}))
+	mux.Handle("GET /api/v1/user", handler.GenericHandler(logger, h.GetUser))
 
 	return h
 }

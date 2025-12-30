@@ -21,9 +21,7 @@ func New(mux *http.ServeMux, logger logger.Logger, deviceFeatureUseCase devicefe
 		deviceFeatureUseCase: deviceFeatureUseCase,
 	}
 
-	mux.Handle("/api/v1/device/{deviceid}/feature", handler.GenericHandler(logger, map[string]handler.Handler{
-		http.MethodPost: h.Update,
-	}))
+	mux.Handle("POST /api/v1/device/{deviceid}/feature", handler.GenericHandler(logger, h.Update))
 
 	return h
 }
