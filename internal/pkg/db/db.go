@@ -34,6 +34,10 @@ func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
 	db.SetConnMaxLifetime(cfg.ConnMaxLifetime.Duration)
 	db.SetConnMaxIdleTime(cfg.ConnMaxIdleTime.Duration)
 
+	if cfg.Stats.Enabled {
+		startDBMonitoring(db, logger, cfg.Stats.TickerDuration.Duration)
+	}
+
 	pingCtx, cancel := context.WithTimeout(context.Background(), cfg.PingTimeout.Duration)
 	defer cancel()
 	if err := db.PingContext(pingCtx); err != nil {
@@ -42,4 +46,13 @@ func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
 	logger.Info("ping db successfully")
 
 	return db, nil
+}
+
+func Close(db *sql.DB, logger logger.Logger) {
+	stopDBMonitoring(logger)
+
+	err := db.Close()
+	if err != nil {
+		logger.WithError(err).Error("error closing db")
+	}
 }

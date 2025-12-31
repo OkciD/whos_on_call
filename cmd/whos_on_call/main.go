@@ -27,7 +27,7 @@ import (
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
-	"github.com/OkciD/whos_on_call/internal/pkg/db"
+	dbPkg "github.com/OkciD/whos_on_call/internal/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
 	"github.com/OkciD/whos_on_call/internal/pkg/logger"
@@ -49,13 +49,13 @@ func main() {
 
 	logger := logger.NewLogrusBasedLogger(&cfg.Logger)
 
-	db, err := db.NewDBConnection(logger, &cfg.DB)
+	db, err := dbPkg.NewDBConnection(logger, &cfg.DB)
 	if err != nil {
 		logger.WithError(err).Fatal("db connection failed")
 	}
 	defer func() {
 		logger.Info("closing db connection")
-		db.Close()
+		dbPkg.Close(db, logger)
 	}()
 
 	goose.SetBaseFS(migrations.EmbedMigrations)

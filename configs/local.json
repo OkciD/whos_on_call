@@ -14,6 +14,11 @@
         "maxOpenConns": 3,
         "connMaxLifetime": "5m",
         "connMaxIdleTime": "3m",
-        "pingTimeout": "1s"
+        "pingTimeout": "1s",
+
+        "stats": {
+            "enabled": true,
+            "tickerDuration": "10s"
+        }
     }
 }

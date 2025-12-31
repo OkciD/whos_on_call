@@ -10,4 +10,9 @@ type Config struct {
 	ConnMaxLifetime duration.MarshallableDuration `json:"connMaxLifetime"`
 	ConnMaxIdleTime duration.MarshallableDuration `json:"connMaxIdleTime"`
 	PingTimeout     duration.MarshallableDuration `json:"pingTimeout"`
+
+	Stats struct {
+		Enabled        bool                          `json:"enabled"`
+		TickerDuration duration.MarshallableDuration `json:"tickerDuration"`
+	} `json:"stats"`
 }
