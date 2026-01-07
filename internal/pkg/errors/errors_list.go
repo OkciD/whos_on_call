@@ -20,4 +20,6 @@ var (
 
 	ErrDeviceFeatureTypeInvalid   = errors.New("invalid device feature type")
 	ErrDeviceFeatureStatusInvalid = errors.New("invalid device feature status")
+
+	ErrCallStatusStateInvalid = errors.New("call status state invalid")
 )

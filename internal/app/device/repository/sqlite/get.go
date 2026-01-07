@@ -10,10 +10,10 @@ import (
 	"github.com/OkciD/whos_on_call/internal/pkg/errors"
 )
 
-func (r *Repository) GetById(ctx context.Context, deviceId int, user *appModels.User) (*appModels.Device, error) {
+func (r *Repository) GetById(ctx context.Context, deviceID int, userID int) (*appModels.Device, error) {
 	result := dbModels.Device{}
 
-	row := r.db.QueryRowContext(ctx, "SELECT id, name, type FROM devices WHERE id = ?", deviceId)
+	row := r.db.QueryRowContext(ctx, "SELECT id, name, type FROM devices WHERE id = ? AND user_id = ?", deviceID, userID)
 
 	if err := row.Scan(&result.ID, &result.Name, &result.Type); err != nil {
 		r.logger.WithError(err).Error("error selecting device by id and user")
@@ -29,7 +29,6 @@ func (r *Repository) GetById(ctx context.Context, deviceId int, user *appModels.
 	if err != nil {
 		return nil, fmt.Errorf("error transforming device to app model: %w", err)
 	}
-	appDevice.User = user
 
 	return appDevice, nil
 }

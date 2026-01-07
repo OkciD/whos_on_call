@@ -17,10 +17,12 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	callStatusDelivery "github.com/OkciD/whos_on_call/internal/app/callstatus/delivery/http"
+	callStatusUseCase "github.com/OkciD/whos_on_call/internal/app/callstatus/usecase"
 	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/app/device/delivery/http"
 	deviceRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/device/repository/sqlite"
 	deviceUseCase "github.com/OkciD/whos_on_call/internal/app/device/usecase"
-	deviceFeatureHttpDelivery "github.com/OkciD/whos_on_call/internal/app/devicefeature/delivery/http"
+	deviceFeatureDelivery "github.com/OkciD/whos_on_call/internal/app/devicefeature/delivery/http"
 	deviceFeatureRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/devicefeature/repository/sqlite"
 	deviceFeatureUseCase "github.com/OkciD/whos_on_call/internal/app/devicefeature/usecase"
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
@@ -76,12 +78,14 @@ func main() {
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
 	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), deviceRepo)
 	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
+	callStatusUseCase := callStatusUseCase.New(logger.ForModule("callstatus_usecase"), cfg.CallStatus.UseCase, userRepo, deviceRepo, deviceFeatureRepo)
 
 	mux := http.NewServeMux()
 
 	userHttpDelivery.New(mux, logger.ForModule("user_handler"), userUseCase)
 	deviceHttpDelivery.New(mux, logger.ForModule("device_handler"), deviceUseCase)
-	deviceFeatureHttpDelivery.New(mux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
+	deviceFeatureDelivery.New(mux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
+	callStatusDelivery.New(mux, logger.ForModule("callstatus_delivery"), callStatusUseCase)
 
 	wrappedMux := middleware.ApplyMiddlewares(
 		mux,

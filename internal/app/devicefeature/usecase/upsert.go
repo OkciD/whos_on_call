@@ -11,17 +11,18 @@ import (
 
 func (u *UseCase) Upsert(
 	ctx context.Context,
-	deviceId int,
+	deviceID int,
 	user *models.User,
 	newDeviceFeature *models.DeviceFeature,
 ) (*models.DeviceFeature, error) {
 	u.logger.WithFields(logger.Fields{
-		"deviceId":       deviceId,
+		"deviceID":       deviceID,
 		"user":           user,
 		"device_feature": newDeviceFeature,
 	}).Info("upsert device feature")
 
-	device, err := u.deviceRepo.GetById(ctx, deviceId, user)
+	device, err := u.deviceRepo.GetById(ctx, deviceID, user.ID)
+	device.User = user
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device from repo: %w", err)
 	}

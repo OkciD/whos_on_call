@@ -52,3 +52,7 @@ type DeviceFeature struct {
 	LastModified *time.Time
 	Device       *Device
 }
+
+func (f *DeviceFeature) WasActiveRecently(timeDelta time.Duration) bool {
+	return f.Status == DeviceFeatureStatusActive && f.LastModified != nil && time.Since(*f.LastModified) <= timeDelta
+}

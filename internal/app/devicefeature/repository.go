@@ -8,4 +8,5 @@ import (
 
 type Repository interface {
 	Upsert(ctx context.Context, newDeviceFeature *models.DeviceFeature) (*models.DeviceFeature, error)
+	ListByDeviceID(ctx context.Context, deviceID int) ([]models.DeviceFeature, error)
 }
