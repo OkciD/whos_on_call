@@ -22,10 +22,10 @@ const (
 )
 
 type DeviceFeature struct {
-	ID           int                 `json:"id"`
-	Type         deviceFeatureType   `json:"type"`
-	Status       deviceFeatureStatus `json:"status"`
-	LastModified string              `json:"lastModified,omitempty"`
+	ID         int                 `json:"id"`
+	Type       deviceFeatureType   `json:"type"`
+	Status     deviceFeatureStatus `json:"status"`
+	LastActive string              `json:"lastActive,omitempty"`
 }
 
 func (d *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
@@ -77,8 +77,8 @@ func FromDeviceFeatureAppModel(appDeviceFeature *appModels.DeviceFeature) (*Devi
 		return nil, errors.ErrDeviceFeatureStatusInvalid
 	}
 
-	if appDeviceFeature.LastModified != nil {
-		apiDeviceFeature.LastModified = appDeviceFeature.LastModified.Format(time.RFC3339)
+	if appDeviceFeature.LastActive != nil {
+		apiDeviceFeature.LastActive = appDeviceFeature.LastActive.Format(time.RFC3339)
 	}
 
 	return apiDeviceFeature, nil

@@ -19,10 +19,10 @@ func (r *Repository) Upsert(
 
 	result, err := r.db.ExecContext(
 		ctx,
-		"INSERT OR REPLACE INTO device_features (type, status, last_modified, device_id) VALUES (?, ?, ?, ?)",
+		"INSERT OR REPLACE INTO device_features (type, status, last_active, device_id) VALUES (?, ?, ?, ?)",
 		dbNewDeviceFeature.Type,
 		dbNewDeviceFeature.Status,
-		dbNewDeviceFeature.LastModified,
+		dbNewDeviceFeature.LastActive,
 		dbNewDeviceFeature.DeviceID,
 	)
 	if err != nil {

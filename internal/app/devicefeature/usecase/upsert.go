@@ -29,8 +29,10 @@ func (u *UseCase) Upsert(
 
 	newDeviceFeature.Device = device
 
-	tn := time.Now()
-	newDeviceFeature.LastModified = &tn
+	if newDeviceFeature.Status == models.DeviceFeatureStatusActive {
+		tn := time.Now()
+		newDeviceFeature.LastActive = &tn
+	}
 
 	newDeviceFeature, err = u.deviceFeatureRepo.Upsert(ctx, newDeviceFeature)
 	if err != nil {

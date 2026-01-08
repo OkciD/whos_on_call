@@ -8,11 +8,11 @@ import (
 )
 
 type DeviceFeature struct {
-	ID           int
-	Type         int8
-	Status       int8
-	LastModified sql.NullTime
-	DeviceID     int
+	ID         int
+	Type       int8
+	Status     int8
+	LastActive sql.NullTime
+	DeviceID   int
 }
 
 func (df *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
@@ -34,8 +34,8 @@ func (df *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 		appDeviceFeature.Status = appModels.DeviceFeatureStatus(df.Status)
 	}
 
-	if df.LastModified.Valid {
-		appDeviceFeature.LastModified = &df.LastModified.Time
+	if df.LastActive.Valid {
+		appDeviceFeature.LastActive = &df.LastActive.Time
 	}
 
 	return appDeviceFeature, nil
@@ -65,10 +65,10 @@ func FromDeviceFeatureAppModel(
 		return nil, errors.ErrDeviceFeatureStatusInvalid
 	}
 
-	if appDeviceFeature.LastModified != nil {
-		dbDeviceFeature.LastModified = sql.NullTime{
+	if appDeviceFeature.LastActive != nil {
+		dbDeviceFeature.LastActive = sql.NullTime{
 			Valid: true,
-			Time:  *appDeviceFeature.LastModified,
+			Time:  *appDeviceFeature.LastActive,
 		}
 	}
 

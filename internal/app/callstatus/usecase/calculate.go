@@ -39,7 +39,7 @@ func (u *UseCase) Calculate(ctx context.Context) (models.CallStatus, error) {
 
 			if userStatus.State == models.CallStateInactive {
 				for _, f := range deviceStatus.Features {
-					if f.WasActiveRecently(u.config.RelaxationPeriod.Duration) {
+					if f.Status == models.DeviceFeatureStatusActive || f.WasActiveRecently(u.config.RelaxationPeriod.Duration) {
 						userStatus.State = models.CallStateActive
 						break
 					}

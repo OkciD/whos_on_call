@@ -46,13 +46,13 @@ func (t DeviceFeatureStatus) String() string {
 }
 
 type DeviceFeature struct {
-	ID           int
-	Type         DeviceFeatureType
-	Status       DeviceFeatureStatus
-	LastModified *time.Time
-	Device       *Device
+	ID         int
+	Type       DeviceFeatureType
+	Status     DeviceFeatureStatus
+	LastActive *time.Time
+	Device     *Device
 }
 
 func (f *DeviceFeature) WasActiveRecently(timeDelta time.Duration) bool {
-	return f.Status == DeviceFeatureStatusActive && f.LastModified != nil && time.Since(*f.LastModified) <= timeDelta
+	return f.LastActive != nil && time.Since(*f.LastActive) <= timeDelta
 }
