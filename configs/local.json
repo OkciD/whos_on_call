@@ -1,6 +1,10 @@
 {
-    "server": {
+    "apiServer": {
         "listenAddr": ":8080",
+        "shutdownTimeout": "10s"
+    },
+    "webServer": {
+        "listenAddr": ":8081",
         "shutdownTimeout": "10s"
     },
     "logger": {

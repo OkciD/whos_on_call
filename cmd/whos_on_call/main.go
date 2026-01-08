@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -28,10 +26,12 @@ import (
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/app/user/delivery/http"
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/app/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/app/user/usecase"
+	webDelivery "github.com/OkciD/whos_on_call/internal/app/web/delivery/html"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 	dbPkg "github.com/OkciD/whos_on_call/internal/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/pkg/http/middleware"
+	"github.com/OkciD/whos_on_call/internal/pkg/http/server"
 	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
 
@@ -80,48 +80,57 @@ func main() {
 	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
 	callStatusUseCase := callStatusUseCase.New(logger.ForModule("callstatus_usecase"), cfg.CallStatus.UseCase, userRepo, deviceRepo, deviceFeatureRepo)
 
-	mux := http.NewServeMux()
+	apiMux := http.NewServeMux()
 
-	userHttpDelivery.New(mux, logger.ForModule("user_handler"), userUseCase)
-	deviceHttpDelivery.New(mux, logger.ForModule("device_handler"), deviceUseCase)
-	deviceFeatureDelivery.New(mux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
-	callStatusDelivery.New(mux, logger.ForModule("callstatus_delivery"), callStatusUseCase)
+	userHttpDelivery.New(apiMux, logger.ForModule("user_handler"), userUseCase)
+	deviceHttpDelivery.New(apiMux, logger.ForModule("device_handler"), deviceUseCase)
+	deviceFeatureDelivery.New(apiMux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
+	callStatusDelivery.New(apiMux, logger.ForModule("callstatus_delivery"), callStatusUseCase)
 
-	wrappedMux := middleware.ApplyMiddlewares(
-		mux,
+	wrappedApiMux := middleware.ApplyMiddlewares(
+		apiMux,
 		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
 		middleware.NewRequestIdMiddleware(),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 
-	server := http.Server{
-		Addr:    cfg.Server.ListenAddr,
-		Handler: wrappedMux,
-	}
-
+	apiServer := server.New("api", cfg.ApiServer, logger, wrappedApiMux)
 	go func() {
-		logger.WithField("addr", cfg.Server.ListenAddr).Info("http server starting")
-
-		if err := server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			logger.WithError(err).Fatal("HTTP server error")
+		if err := apiServer.Start(); err != nil {
+			logger.WithError(err).Fatal("error starting api server")
 		}
-		logger.Info("stopped serving new connections")
+	}()
+
+	webMux := http.NewServeMux()
+
+	webDelivery.New(webMux, logger.ForModule("web_delivery"), callStatusUseCase)
+
+	wrappedWebMux := middleware.ApplyMiddlewares(
+		webMux,
+		middleware.NewAccessLogMiddleware(logger),
+		middleware.NewRequestIdMiddleware(),
+		middleware.NewRecoveryMiddleware(logger),
+	)
+
+	webServer := server.New("web", cfg.WebServer, logger, wrappedWebMux)
+	go func() {
+		if err := webServer.Start(); err != nil {
+			logger.WithError(err).Fatal("error starting web server")
+		}
 	}()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
+	sig := <-sigChan
 
-	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), cfg.Server.ShutdownTimeout.Duration)
-	defer shutdownRelease()
+	logger.WithField("signal", sig).Info("received signal")
 
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		logger.WithError(err).Warn("HTTP shutdown error, trying force close")
-
-		if err = server.Close(); err != nil {
-			logger.WithError(err).Fatal("HTTP close error")
-		}
+	if err = apiServer.Stop(); err != nil {
+		logger.WithError(err).Fatal("error stopping api server")
+	}
+	if err = webServer.Stop(); err != nil {
+		logger.WithError(err).Fatal("error stopping web server")
 	}
 
 	logger.Info("graceful shutdown complete")

@@ -34,3 +34,5 @@ go.work.sum
 build/bin
 build/dev/db/db.sqlite3
 build/dev/db/db.sqlite3-journal
+
+.DS_Store

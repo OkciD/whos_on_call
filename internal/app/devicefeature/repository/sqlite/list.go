@@ -11,7 +11,7 @@ import (
 func (r *Repository) ListByDeviceID(ctx context.Context, deviceID int) ([]appModels.DeviceFeature, error) {
 	dbFeatures := make([]dbModels.DeviceFeature, 0, 2)
 
-	rows, err := r.db.QueryContext(ctx, "SELECT id, type, status, last_active FROM device_features WHERE device_id = ?", deviceID)
+	rows, err := r.db.QueryContext(ctx, "SELECT id, type, status, last_active FROM device_features WHERE device_id = ? ORDER BY type ASC", deviceID)
 	if err != nil {
 		return nil, fmt.Errorf("select device features by device query failed: %w", err)
 	}
