@@ -1,8 +1,8 @@
 :root {
-    --color-background: black;
-    --color-call-active: red;
-    --color-call-inactive: green;
-    --color-text: white;
+    --color-background: #212121;
+    --color-call-active: #B00020;
+    --color-call-inactive: #4CAF50;
+    --color-text: #E3E3E3;
 
     --size-cards-gap: 16px
 }
@@ -42,12 +42,12 @@ body {
     max-height: calc(100% - var(--size-cards-gap)/2);
 
     box-sizing: border-box;
-    padding: 8px;
+    padding: 16px;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 8px;
+    gap: 16px;
 }
 .status-card__active {
     background-color: var(--color-call-active);
