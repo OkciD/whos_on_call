@@ -8,7 +8,7 @@ import (
 	"github.com/OkciD/whos_on_call/internal/app/models/db"
 )
 
-func (r *Repository) Upsert(
+func (r *Repository) Create(
 	ctx context.Context,
 	newDeviceFeature *appModels.DeviceFeature,
 ) (*appModels.DeviceFeature, error) {
@@ -19,14 +19,14 @@ func (r *Repository) Upsert(
 
 	result, err := r.db.ExecContext(
 		ctx,
-		"INSERT OR REPLACE INTO device_features (type, status, last_active, device_id) VALUES (?, ?, ?, ?)",
+		"INSERT INTO device_features (type, status, last_active, device_id) VALUES (?, ?, ?, ?)",
 		dbNewDeviceFeature.Type,
 		dbNewDeviceFeature.Status,
 		dbNewDeviceFeature.LastActive,
 		dbNewDeviceFeature.DeviceID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to insert/update device_feature: %w", err)
+		return nil, fmt.Errorf("failed to insert device_feature: %w", err)
 	}
 
 	if lastInsertId, err := result.LastInsertId(); err == nil {

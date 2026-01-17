@@ -18,6 +18,7 @@ var (
 	ErrDeviceTypeInvalid = errors.New("invalid device type")
 	ErrDeviceExists      = errors.New("device already exists")
 
+	ErrDeviceFeatureNotFound      = errors.New("device feature not found")
 	ErrDeviceFeatureTypeInvalid   = errors.New("invalid device feature type")
 	ErrDeviceFeatureStatusInvalid = errors.New("invalid device feature status")
 
