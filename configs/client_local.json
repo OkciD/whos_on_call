@@ -1,0 +1,6 @@
+{
+    "logger": {
+        "level": "trace",
+        "format": "text"
+    }
+}

@@ -4,10 +4,13 @@ LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
 LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 
 .PHONY: build
-build: build/bin/server
+build: build/bin/server build/bin/client
 
 build/bin/server:
 	go build -o $(@) ./cmd/server
+
+build/bin/client:
+	go build -o $(@) ./cmd/client
 
 .PHONY: clean
 clean:
