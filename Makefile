@@ -4,10 +4,10 @@ LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
 LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 
 .PHONY: build
-build: build/bin/whos_on_call
+build: build/bin/server
 
-build/bin/whos_on_call:
-	go build -o $(@) ./cmd/whos_on_call
+build/bin/server:
+	go build -o $(@) ./cmd/server
 
 .PHONY: clean
 clean:
@@ -15,7 +15,7 @@ clean:
 
 .PHONY: run
 run: clean build
-	$(BIN_DIR)/whos_on_call -config=$(ROOT_DIR)/configs/local.json
+	$(BIN_DIR)/server -config=$(ROOT_DIR)/configs/server_local.json
 
 .PHONY: start
 start: run
