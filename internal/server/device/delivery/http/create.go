@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/OkciD/whos_on_call/internal/errors"
 	"github.com/OkciD/whos_on_call/internal/models/api"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 )
 
@@ -15,7 +15,7 @@ func (h *UserHandler) CreateDevice(r *http.Request) (handler.ResponseWriter, err
 	decoder := json.NewDecoder(r.Body)
 	var newDeviceInput api.Device
 	if err := decoder.Decode(&newDeviceInput); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidJSON, err)
+		return nil, fmt.Errorf("%w: %w", errors.ErrBadJSON, err)
 	}
 
 	user, err := appContext.GetUser(r.Context())

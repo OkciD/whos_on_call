@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/OkciD/whos_on_call/internal/errors"
 	"github.com/OkciD/whos_on_call/internal/models/api"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 )
 
@@ -16,13 +16,13 @@ func (h *DeviceFeatureHandler) Update(r *http.Request) (handler.ResponseWriter, 
 	deviceIdStr := r.PathValue("deviceid")
 	deviceId, err := strconv.Atoi(deviceIdStr)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidParam, err)
+		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidUrlParam, err)
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	var newDeviceFeatureInput api.DeviceFeature
 	if err := decoder.Decode(&newDeviceFeatureInput); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidJSON, err)
+		return nil, fmt.Errorf("%w: %w", errors.ErrBadJSON, err)
 	}
 
 	newDeviceFeatureApp, err := newDeviceFeatureInput.ToAppModel()

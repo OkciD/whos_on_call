@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 
+	"github.com/OkciD/whos_on_call/internal/errors"
 	appModels "github.com/OkciD/whos_on_call/internal/models"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 )
 
 type callState string

@@ -6,9 +6,9 @@ import (
 
 	"fmt"
 
+	appErrors "github.com/OkciD/whos_on_call/internal/errors"
 	"github.com/OkciD/whos_on_call/internal/models"
 	"github.com/OkciD/whos_on_call/internal/models/db"
-	appErrors "github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 	sqlite "github.com/mattn/go-sqlite3"
 )
 
@@ -22,7 +22,7 @@ func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*mod
 	if err != nil {
 		if sqliteError, ok := err.(sqlite.Error); ok {
 			if sqliteError.Code == sqlite.ErrConstraint && sqliteError.ExtendedCode == sqlite.ErrConstraintUnique {
-				return nil, fmt.Errorf("%w, %w", appErrors.ErrDeviceExists, errors.New(sqliteError.Error()))
+				return nil, fmt.Errorf("%w, %w", appErrors.ErrDuplicate, errors.New(sqliteError.Error()))
 			}
 		}
 

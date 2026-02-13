@@ -3,8 +3,8 @@ package context
 import (
 	"context"
 
+	appErrors "github.com/OkciD/whos_on_call/internal/errors"
 	"github.com/OkciD/whos_on_call/internal/models"
-	appErrors "github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 )
 
 type userCtxKey struct{}

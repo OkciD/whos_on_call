@@ -7,9 +7,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/OkciD/whos_on_call/internal/errors"
 	appModels "github.com/OkciD/whos_on_call/internal/models"
 	dbModels "github.com/OkciD/whos_on_call/internal/models/db"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 )
 
 func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appModels.User, error) {
@@ -25,7 +25,7 @@ func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appMo
 		r.logger.WithError(err).Error("error selecting user")
 
 		if err == sql.ErrNoRows {
-			return nil, errors.ErrUserNotFound
+			return nil, errors.ErrNotFound
 		}
 
 		return nil, fmt.Errorf("error selecting user: %w", err)

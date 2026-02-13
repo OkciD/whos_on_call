@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	appErrors "github.com/OkciD/whos_on_call/internal/errors"
 	"github.com/OkciD/whos_on_call/internal/models"
 	"github.com/OkciD/whos_on_call/internal/pkg/logger"
-	appErrors "github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 )
 
 func (u *UseCase) Upsert(

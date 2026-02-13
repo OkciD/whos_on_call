@@ -5,8 +5,8 @@ import (
 
 	"runtime/debug"
 
+	appErrors "github.com/OkciD/whos_on_call/internal/errors"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
-	appErrors "github.com/OkciD/whos_on_call/internal/server/pkg/errors"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 )
 
