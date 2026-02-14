@@ -2,5 +2,10 @@
     "logger": {
         "level": "trace",
         "format": "text"
+    },
+    "http_client": {
+        "timeout": "2s",
+        "apiKey": "lolkek",
+        "baseUrl": "http://127.0.0.1:8080"
     }
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	deviceRepository "github.com/OkciD/whos_on_call/internal/client/device/repository/api"
+	"github.com/OkciD/whos_on_call/internal/client/pkg/httpclient"
 	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
 	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 )
@@ -24,6 +26,13 @@ func main() {
 	}
 
 	logger := logger.NewLogrusBasedLogger(&cfg.Logger)
+
+	httpClient, err := httpclient.New(logger.ForModule("http_client"), cfg.HttpClient)
+	if err != nil {
+		log.Fatal(fmt.Errorf("failed to init http client: %w", err))
+	}
+
+	_ = deviceRepository.New(logger.ForModule("device_repo"), httpClient)
 
 	logger.Info("hello world")
 }
