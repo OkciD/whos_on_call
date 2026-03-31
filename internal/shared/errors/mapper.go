@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/utils"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/utils"
 )
 
 type ErrorResp struct {

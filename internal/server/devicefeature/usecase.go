@@ -3,7 +3,7 @@ package devicefeature
 import (
 	"context"
 
-	"github.com/OkciD/whos_on_call/internal/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 type UseCase interface {

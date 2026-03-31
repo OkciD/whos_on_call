@@ -7,9 +7,9 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/OkciD/whos_on_call/internal/errors"
-	appModels "github.com/OkciD/whos_on_call/internal/models"
-	dbModels "github.com/OkciD/whos_on_call/internal/models/db"
+	"github.com/OkciD/whos_on_call/internal/shared/errors"
+	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
+	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
 func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appModels.User, error) {

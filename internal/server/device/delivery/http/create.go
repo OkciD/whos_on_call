@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/errors"
-	"github.com/OkciD/whos_on_call/internal/models/api"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
+	"github.com/OkciD/whos_on_call/internal/shared/errors"
+	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
 func (h *UserHandler) CreateDevice(r *http.Request) (handler.ResponseWriter, error) {

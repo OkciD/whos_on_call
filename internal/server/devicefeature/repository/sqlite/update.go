@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	appModels "github.com/OkciD/whos_on_call/internal/models"
-	"github.com/OkciD/whos_on_call/internal/models/db"
+	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
 func (r *Repository) Update(

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/OkciD/whos_on_call/internal/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 func (u *UseCase) Calculate(ctx context.Context) (models.CallStatus, error) {

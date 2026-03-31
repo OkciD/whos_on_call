@@ -6,9 +6,9 @@ import (
 
 	"fmt"
 
-	appErrors "github.com/OkciD/whos_on_call/internal/errors"
-	"github.com/OkciD/whos_on_call/internal/models"
-	"github.com/OkciD/whos_on_call/internal/models/db"
+	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models/db"
 	sqlite "github.com/mattn/go-sqlite3"
 )
 

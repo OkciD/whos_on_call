@@ -3,7 +3,7 @@ package sqldblogger_adapter
 import (
 	"context"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 
 	sqldblogger "github.com/simukti/sqldb-logger"
 )

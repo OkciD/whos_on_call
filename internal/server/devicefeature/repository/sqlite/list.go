@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	appModels "github.com/OkciD/whos_on_call/internal/models"
-	dbModels "github.com/OkciD/whos_on_call/internal/models/db"
+	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
+	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
 func (r *Repository) ListByDeviceID(ctx context.Context, deviceID int) ([]appModels.DeviceFeature, error) {

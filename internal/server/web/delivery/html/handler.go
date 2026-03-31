@@ -3,9 +3,9 @@ package html
 import (
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
 	"github.com/OkciD/whos_on_call/internal/server/web/static"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type WebHandler struct {

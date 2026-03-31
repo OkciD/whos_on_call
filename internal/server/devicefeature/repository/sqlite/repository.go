@@ -3,8 +3,8 @@ package sqlite
 import (
 	"database/sql"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/devicefeature"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type Repository struct {

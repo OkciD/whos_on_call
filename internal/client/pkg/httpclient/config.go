@@ -1,6 +1,6 @@
 package httpclient
 
-import "github.com/OkciD/whos_on_call/internal/pkg/duration"
+import "github.com/OkciD/whos_on_call/internal/shared/pkg/duration"
 
 type Config struct {
 	Timeout duration.MarshallableDuration `json:"timeout"`

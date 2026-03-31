@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 var ticker *time.Ticker

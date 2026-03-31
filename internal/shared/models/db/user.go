@@ -1,6 +1,6 @@
 package db
 
-import appModels "github.com/OkciD/whos_on_call/internal/models"
+import appModels "github.com/OkciD/whos_on_call/internal/shared/models"
 
 type User struct {
 	ID         int

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/OkciD/whos_on_call/internal/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 func (u *UseCase) Create(ctx context.Context, newDevice *models.Device) (*models.Device, error) {

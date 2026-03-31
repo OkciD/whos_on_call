@@ -3,10 +3,10 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/server/user"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 const API_KEY_HEADER = "X-Api-Key"

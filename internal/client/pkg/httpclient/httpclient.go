@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type HTTPClient struct {

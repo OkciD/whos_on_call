@@ -7,8 +7,8 @@ import (
 
 	deviceRepository "github.com/OkciD/whos_on_call/internal/client/device/repository/api"
 	"github.com/OkciD/whos_on_call/internal/client/pkg/httpclient"
-	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
+	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 func main() {

@@ -3,8 +3,8 @@ package html
 import (
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/models"
 	"github.com/OkciD/whos_on_call/internal/server/web/templates"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 type constants struct {

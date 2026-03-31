@@ -5,9 +5,9 @@ import (
 
 	"runtime/debug"
 
-	appErrors "github.com/OkciD/whos_on_call/internal/errors"
-	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
+	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 func NewRecoveryMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Handler {

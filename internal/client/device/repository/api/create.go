@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/models"
-	"github.com/OkciD/whos_on_call/internal/models/api"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
 func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*models.Device, error) {

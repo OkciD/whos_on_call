@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/context"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 func NewAccessLogMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Handler {

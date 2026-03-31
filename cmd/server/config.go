@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	callStatusUseCase "github.com/OkciD/whos_on_call/internal/server/callstatus/usecase"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/server"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type config struct {

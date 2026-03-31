@@ -13,8 +13,6 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	configUtils "github.com/OkciD/whos_on_call/internal/pkg/config"
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	callStatusDelivery "github.com/OkciD/whos_on_call/internal/server/callstatus/delivery/http"
 	callStatusUseCase "github.com/OkciD/whos_on_call/internal/server/callstatus/usecase"
 	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/server/device/delivery/http"
@@ -31,6 +29,8 @@ import (
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/server/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/server/user/usecase"
 	webDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/html"
+	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 func main() {

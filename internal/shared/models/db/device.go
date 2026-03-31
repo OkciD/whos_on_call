@@ -1,8 +1,8 @@
 package db
 
 import (
-	"github.com/OkciD/whos_on_call/internal/errors"
-	appModels "github.com/OkciD/whos_on_call/internal/models"
+	"github.com/OkciD/whos_on_call/internal/shared/errors"
+	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 type Device struct {

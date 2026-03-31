@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/OkciD/whos_on_call/internal/models"
+	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
 func (u *UseCase) GetUserByApiKey(ctx context.Context, apiKey string) (*models.User, error) {

@@ -1,6 +1,6 @@
 package db
 
-import "github.com/OkciD/whos_on_call/internal/pkg/duration"
+import "github.com/OkciD/whos_on_call/internal/shared/pkg/duration"
 
 type Config struct {
 	Driver          string                        `json:"driver"`

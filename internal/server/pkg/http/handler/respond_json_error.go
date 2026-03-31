@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	appErrors "github.com/OkciD/whos_on_call/internal/errors"
+	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
 )
 
 type errorResponseJSON struct {

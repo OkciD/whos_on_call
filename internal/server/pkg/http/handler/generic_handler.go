@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	loggerPkg "github.com/OkciD/whos_on_call/internal/pkg/logger"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type ResponseWriter func(w http.ResponseWriter) error

@@ -3,9 +3,9 @@ package http
 import (
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/server/user"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type UserHandler struct {

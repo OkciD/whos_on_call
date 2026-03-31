@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/OkciD/whos_on_call/internal/pkg/logger"
 	"github.com/OkciD/whos_on_call/internal/server/device"
 	"github.com/OkciD/whos_on_call/internal/server/devicefeature"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type UseCase struct {
