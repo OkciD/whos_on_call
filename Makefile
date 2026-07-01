@@ -43,3 +43,7 @@ db/create_migration:
 .PHONY: db/populate
 db/populate:
 	sqlite3 $(LOCAL_DB_PATH) < $(LOCAL_DB_DIR)/test_data.sql
+
+.PHONY: gen/api
+gen/api:
+	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml

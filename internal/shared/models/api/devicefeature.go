@@ -1,51 +1,28 @@
 package api
 
 import (
-	"time"
-
 	"github.com/OkciD/whos_on_call/internal/shared/errors"
 	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
-type deviceFeatureType string
-
-const (
-	deviceFeatureTypeMic    deviceFeatureType = "mic"
-	deviceFeatureTypeCamera deviceFeatureType = "camera"
-)
-
-type deviceFeatureStatus string
-
-const (
-	deviceFeatureStatusInactive deviceFeatureStatus = "inactive"
-	deviceFeatureStatusActive   deviceFeatureStatus = "active"
-)
-
-type DeviceFeature struct {
-	ID         int                 `json:"id"`
-	Type       deviceFeatureType   `json:"type"`
-	Status     deviceFeatureStatus `json:"status"`
-	LastActive string              `json:"lastActive,omitempty"`
-}
-
 func (d *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 	appDeviceFeature := &appModels.DeviceFeature{
-		ID: d.ID,
+		ID: int(d.Id),
 	}
 
 	switch d.Type {
-	case deviceFeatureTypeMic:
+	case DeviceFeatureTypeMic:
 		appDeviceFeature.Type = appModels.DeviceFeatureTypeMic
-	case deviceFeatureTypeCamera:
+	case DeviceFeatureTypeCamera:
 		appDeviceFeature.Type = appModels.DeviceFeatureTypeCamera
 	default:
 		return nil, errors.ErrDeviceFeatureTypeInvalid
 	}
 
 	switch d.Status {
-	case deviceFeatureStatusInactive:
+	case DeviceFeatureStatusInactive:
 		appDeviceFeature.Status = appModels.DeviceFeatureStatusInactive
-	case deviceFeatureStatusActive:
+	case DeviceFeatureStatusActive:
 		appDeviceFeature.Status = appModels.DeviceFeatureStatusActive
 	default:
 		return nil, errors.ErrDeviceFeatureStatusInvalid
@@ -56,29 +33,26 @@ func (d *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 
 func FromDeviceFeatureAppModel(appDeviceFeature *appModels.DeviceFeature) (*DeviceFeature, error) {
 	apiDeviceFeature := &DeviceFeature{
-		ID: appDeviceFeature.ID,
+		Id:         int32(appDeviceFeature.ID),
+		LastActive: appDeviceFeature.LastActive,
 	}
 
 	switch appDeviceFeature.Type {
 	case appModels.DeviceFeatureTypeMic:
-		apiDeviceFeature.Type = deviceFeatureTypeMic
+		apiDeviceFeature.Type = DeviceFeatureTypeMic
 	case appModels.DeviceFeatureTypeCamera:
-		apiDeviceFeature.Type = deviceFeatureTypeCamera
+		apiDeviceFeature.Type = DeviceFeatureTypeCamera
 	default:
 		return nil, errors.ErrDeviceFeatureTypeInvalid
 	}
 
 	switch appDeviceFeature.Status {
 	case appModels.DeviceFeatureStatusInactive:
-		apiDeviceFeature.Status = deviceFeatureStatusInactive
+		apiDeviceFeature.Status = DeviceFeatureStatusInactive
 	case appModels.DeviceFeatureStatusActive:
-		apiDeviceFeature.Status = deviceFeatureStatusActive
+		apiDeviceFeature.Status = DeviceFeatureStatusActive
 	default:
 		return nil, errors.ErrDeviceFeatureStatusInvalid
-	}
-
-	if appDeviceFeature.LastActive != nil {
-		apiDeviceFeature.LastActive = appDeviceFeature.LastActive.Format(time.RFC3339)
 	}
 
 	return apiDeviceFeature, nil

@@ -5,32 +5,18 @@ import (
 	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
-type deviceType string
-
-const (
-	deviceTypeLaptop deviceType = "laptop"
-	deviceTypeMobile deviceType = "mobile"
-	deviceTypePC     deviceType = "pc"
-)
-
-type Device struct {
-	ID   int        `json:"id"`
-	Name string     `json:"name"`
-	Type deviceType `json:"type"`
-}
-
 func (d *Device) ToAppModel() (*appModels.Device, error) {
 	appDevice := &appModels.Device{
-		ID:   d.ID,
+		ID:   int(d.Id),
 		Name: d.Name,
 	}
 
 	switch d.Type {
-	case deviceTypeLaptop:
+	case DeviceTypeLaptop:
 		appDevice.Type = appModels.DeviceTypeLaptop
-	case deviceTypeMobile:
+	case DeviceTypeMobile:
 		appDevice.Type = appModels.DeviceTypeMobile
-	case deviceTypePC:
+	case DeviceTypePC:
 		appDevice.Type = appModels.DeviceTypePC
 	default:
 		return nil, errors.ErrDeviceTypeInvalid
@@ -41,17 +27,17 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 
 func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 	apiDevice := &Device{
-		ID:   appDevice.ID,
+		Id:   int32(appDevice.ID),
 		Name: appDevice.Name,
 	}
 
 	switch appDevice.Type {
 	case appModels.DeviceTypeLaptop:
-		apiDevice.Type = deviceTypeLaptop
+		apiDevice.Type = DeviceTypeLaptop
 	case appModels.DeviceTypeMobile:
-		apiDevice.Type = deviceTypeMobile
+		apiDevice.Type = DeviceTypeMobile
 	case appModels.DeviceTypePC:
-		apiDevice.Type = deviceTypePC
+		apiDevice.Type = DeviceTypePC
 	default:
 		return nil, errors.ErrDeviceTypeInvalid
 	}

@@ -262,6 +262,10 @@ components:
         - laptop
         - mobile
         - pc
+      x-enum-varnames:
+        - DeviceTypeLaptop
+        - DeviceTypeMobile
+        - DeviceTypePC
       description: "Device type"
 
     Device:
@@ -298,6 +302,9 @@ components:
       enum:
         - mic
         - camera
+      x-enum-varnames:
+        - DeviceFeatureTypeMic
+        - DeviceFeatureTypeCamera
       description: "Device feature type"
 
     DeviceFeatureStatus:
@@ -305,6 +312,9 @@ components:
       enum:
         - inactive
         - active
+      x-enum-varnames:
+        - DeviceFeatureStatusInactive
+        - DeviceFeatureStatusActive
       description: "Device feature status"
 
     DeviceFeature:
@@ -343,9 +353,17 @@ components:
       enum:
         - inactive
         - active
+      x-enum-varnames:
+        - CallStateInactive
+        - CallStateActive
       description: "Call state for the user"
 
     CallStatus:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserStatus"
+
+    UserStatus:
       type: object
       required:
         - user
