@@ -1,0 +1,148 @@
+info:
+  name: Create a new device
+  type: http
+  seq: 1
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/device"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Game Station",
+        "type": "pc"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 201 Response
+    description: Device created successfully
+    request:
+      url: "{{baseUrl}}/device"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+    response:
+      status: 201
+      statusText: Created
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "id": 1,
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+  - name: badJson
+    request:
+      url: "{{baseUrl}}/device"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "bad json"
+          }
+  - name: invalidType
+    request:
+      url: "{{baseUrl}}/device"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "invalid device type"
+          }
+  - name: 401 Response
+    description: Unauthorized - invalid or missing API key
+    request:
+      url: "{{baseUrl}}/device"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "unauthorized"
+          }
+  - name: 500 Response
+    description: Internal server error
+    request:
+      url: "{{baseUrl}}/device"
+      method: POST
+      body:
+        type: json
+        data: |-
+          {
+            "name": "MacBook Pro",
+            "type": "laptop"
+          }
+    response:
+      status: 500
+      statusText: Internal Server Error
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "internal"
+          }
+
+docs: Creates a new device for the authenticated user

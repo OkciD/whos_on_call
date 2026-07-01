@@ -1,0 +1,264 @@
+info:
+  name: Upsert device feature
+  type: http
+  seq: 1
+  tags:
+    - Device Feature
+
+http:
+  method: POST
+  url: "{{baseUrl}}/device/:deviceid/feature"
+  params:
+    - name: deviceid
+      value: "1"
+      type: path
+      description: Device ID
+  body:
+    type: json
+    data: |-
+      {
+        "type": "mic",
+        "status": "active"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+examples:
+  - name: 200 Response
+    description: Device feature upserted successfully
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 200
+      statusText: OK
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "id": 1,
+            "type": "mic",
+            "status": "active",
+            "lastActive": "2026-04-01T01:00:00Z"
+          }
+  - name: badJson
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "bad json"
+          }
+  - name: invalidUrlParam
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "invalid url param"
+          }
+  - name: invalidFeatureType
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "invalid device feature type"
+          }
+  - name: invalidFeatureStatus
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 400
+      statusText: Bad Request
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "invalid device feature status"
+          }
+  - name: 401 Response
+    description: Unauthorized - invalid or missing API key
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 401
+      statusText: Unauthorized
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "unauthorized"
+          }
+  - name: 404 Response
+    description: Device feature not found
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 404
+      statusText: Not Found
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "not found"
+          }
+  - name: 500 Response
+    description: Internal server error
+    request:
+      url: "{{baseUrl}}/device/:deviceid/feature"
+      method: POST
+      params:
+        - name: deviceid
+          value: ""
+          type: path
+          description: Device ID
+      body:
+        type: json
+        data: |-
+          {
+            "type": "mic",
+            "status": "active"
+          }
+    response:
+      status: 500
+      statusText: Internal Server Error
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "err_code": "internal"
+          }
+
+docs: Creates or updates a device feature for the specified device

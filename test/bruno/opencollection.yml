@@ -1,0 +1,22 @@
+opencollection: 1.0.0
+
+info:
+  name: Who's On Call API
+
+request:
+  auth:
+    type: apikey
+    key: X-Api-Key
+    value: "{{apiKey}}"
+    placement: header
+  variables:
+    - name: baseUrl
+      value: http://127.0.0.1:8080/api/v1
+    - name: apiKey
+      value: lolkek
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
