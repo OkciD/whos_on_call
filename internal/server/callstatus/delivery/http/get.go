@@ -1,21 +1,21 @@
 package http
 
 import (
+	"context"
 	"fmt"
-	"net/http"
 
+	"github.com/OkciD/whos_on_call/cmd/server/apiserver/gen"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
-func (h *CallStatusHandler) GetStatus(r *http.Request) (handler.ResponseWriter, error) {
-	_, err := appContext.GetUser(r.Context())
+func (h *Handler) GetStatus(ctx context.Context, request gen.GetStatusRequestObject) (gen.GetStatusResponseObject, error) {
+	_, err := appContext.GetUser(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)
 	}
 
-	appCallStatus, err := h.callStatusUseCase.Calculate(r.Context())
+	appCallStatus, err := h.callStatusUseCase.Calculate(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error calculating status: %w", err)
 	}
@@ -25,5 +25,5 @@ func (h *CallStatusHandler) GetStatus(r *http.Request) (handler.ResponseWriter, 
 		return nil, fmt.Errorf("error transforming call status from app to api: %w", err)
 	}
 
-	return handler.RespondJSON(apiCallStatus), nil
+	return gen.GetStatus200JSONResponse(apiCallStatus), nil
 }

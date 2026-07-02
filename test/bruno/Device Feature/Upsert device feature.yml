@@ -6,8 +6,8 @@ info:
     - Device Feature
 
 http:
-  method: POST
-  url: "{{baseUrl}}/device/:deviceid/feature"
+  method: PUT
+  url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
   params:
     - name: deviceid
       value: "1"
@@ -32,7 +32,7 @@ examples:
   - name: 200 Response
     description: Device feature upserted successfully
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -63,7 +63,7 @@ examples:
           }
   - name: badJson
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -91,7 +91,7 @@ examples:
           }
   - name: invalidUrlParam
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -119,7 +119,7 @@ examples:
           }
   - name: invalidFeatureType
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -147,7 +147,7 @@ examples:
           }
   - name: invalidFeatureStatus
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -176,7 +176,7 @@ examples:
   - name: 401 Response
     description: Unauthorized - invalid or missing API key
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -205,7 +205,7 @@ examples:
   - name: 404 Response
     description: Device feature not found
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid
@@ -234,7 +234,7 @@ examples:
   - name: 500 Response
     description: Internal server error
     request:
-      url: "{{baseUrl}}/device/:deviceid/feature"
+      url: "{{baseUrl}}/api/v1/device/:deviceid/feature"
       method: POST
       params:
         - name: deviceid

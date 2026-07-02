@@ -1,27 +1,22 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/OkciD/whos_on_call/internal/server/devicefeature"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-type DeviceFeatureHandler struct {
+type Handler struct {
 	logger logger.Logger
 
 	deviceFeatureUseCase devicefeature.UseCase
 }
 
-func New(mux *http.ServeMux, logger logger.Logger, deviceFeatureUseCase devicefeature.UseCase) *DeviceFeatureHandler {
-	h := &DeviceFeatureHandler{
+func New(logger logger.Logger, deviceFeatureUseCase devicefeature.UseCase) *Handler {
+	h := &Handler{
 		logger: logger,
 
 		deviceFeatureUseCase: deviceFeatureUseCase,
 	}
-
-	mux.Handle("POST /api/v1/device/{deviceid}/feature", handler.GenericHandler(logger, h.Update))
 
 	return h
 }

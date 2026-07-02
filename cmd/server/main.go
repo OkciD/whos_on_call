@@ -9,10 +9,15 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/pressly/goose/v3"
 
 	_ "github.com/mattn/go-sqlite3"
 
+	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
+
+	"github.com/OkciD/whos_on_call/cmd/server/apiserver"
+	"github.com/OkciD/whos_on_call/cmd/server/apiserver/gen"
 	callStatusDelivery "github.com/OkciD/whos_on_call/internal/server/callstatus/delivery/http"
 	callStatusUseCase "github.com/OkciD/whos_on_call/internal/server/callstatus/usecase"
 	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/server/device/delivery/http"
@@ -78,15 +83,35 @@ func main() {
 	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
 	callStatusUseCase := callStatusUseCase.New(logger.ForModule("callstatus_usecase"), cfg.CallStatus.UseCase, userRepo, deviceRepo, deviceFeatureRepo)
 
-	apiMux := http.NewServeMux()
+	userDelivery := userHttpDelivery.New(logger.ForModule("user_handler"), userUseCase)
+	deviceDelivery := deviceHttpDelivery.New(logger.ForModule("device_handler"), deviceUseCase)
+	deviceFeatureDelivery := deviceFeatureDelivery.New(logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
+	callStatusDelivery := callStatusDelivery.New(logger.ForModule("callstatus_delivery"), callStatusUseCase)
 
-	userHttpDelivery.New(apiMux, logger.ForModule("user_handler"), userUseCase)
-	deviceHttpDelivery.New(apiMux, logger.ForModule("device_handler"), deviceUseCase)
-	deviceFeatureDelivery.New(apiMux, logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
-	callStatusDelivery.New(apiMux, logger.ForModule("callstatus_delivery"), callStatusUseCase)
+	apiSrv := gen.NewStrictHandlerWithOptions(apiserver.ApiServer{
+		UserDelivery:          userDelivery,
+		DeviceDelivery:        deviceDelivery,
+		DeviceFeatureDelivery: deviceFeatureDelivery,
+		CallStatusDelivery:    callStatusDelivery,
+	}, []gen.StrictMiddlewareFunc{}, gen.StrictHTTPServerOptions{})
+
+	spec, err := gen.GetSwagger()
+	if err != nil {
+		logger.WithError(err).Fatal("error loading swagger spec")
+	}
+	spec.Servers = nil
+
+	apiServeMux := http.NewServeMux()
+	apiMux := gen.HandlerFromMux(apiSrv, apiServeMux)
 
 	wrappedApiMux := middleware.ApplyMiddlewares(
 		apiMux,
+		nethttpmiddleware.OapiRequestValidatorWithOptions(spec, &nethttpmiddleware.Options{
+			// todo: может переделать auth middleware на вот это?
+			Options: openapi3filter.Options{
+				AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
+			},
+		}),
 		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
 		middleware.NewRequestIdMiddleware(),

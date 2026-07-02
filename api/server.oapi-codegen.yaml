@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: gen
+
+generate:
+  std-http-server: true
+  strict-server: true
+  embedded-spec: true
+
+output: cmd/server/apiserver/gen/gen.go
+
+additional-imports:
+  - package: github.com/OkciD/whos_on_call/internal/shared/models/api
+    alias: .

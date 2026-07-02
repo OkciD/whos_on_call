@@ -1,27 +1,22 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-type CallStatusHandler struct {
+type Handler struct {
 	logger logger.Logger
 
 	callStatusUseCase callstatus.UseCase
 }
 
-func New(mux *http.ServeMux, logger logger.Logger, callStatusUseCase callstatus.UseCase) *CallStatusHandler {
-	h := &CallStatusHandler{
+func New(logger logger.Logger, callStatusUseCase callstatus.UseCase) *Handler {
+	h := &Handler{
 		logger: logger,
 
 		callStatusUseCase: callStatusUseCase,
 	}
-
-	mux.Handle("GET /api/v1/status", handler.GenericHandler(logger, h.GetStatus))
 
 	return h
 }

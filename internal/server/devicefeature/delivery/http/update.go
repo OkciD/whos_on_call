@@ -1,28 +1,20 @@
 package http
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
-	"strconv"
 
+	"github.com/OkciD/whos_on_call/cmd/server/apiserver/gen"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
-	"github.com/OkciD/whos_on_call/internal/shared/errors"
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
-func (h *DeviceFeatureHandler) Update(r *http.Request) (handler.ResponseWriter, error) {
-	deviceIdStr := r.PathValue("deviceid")
-	deviceId, err := strconv.Atoi(deviceIdStr)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrInvalidUrlParam, err)
-	}
+func (h *Handler) Update(ctx context.Context, request gen.UpsertDeviceFeatureRequestObject) (gen.UpsertDeviceFeatureResponseObject, error) {
+	deviceId := int(request.Deviceid)
 
-	decoder := json.NewDecoder(r.Body)
-	var newDeviceFeatureInput api.DeviceFeature
-	if err := decoder.Decode(&newDeviceFeatureInput); err != nil {
-		return nil, fmt.Errorf("%w: %w", errors.ErrBadJSON, err)
+	newDeviceFeatureInput := api.DeviceFeature{
+		Status: request.Body.Status,
+		Type:   request.Body.Type,
 	}
 
 	newDeviceFeatureApp, err := newDeviceFeatureInput.ToAppModel()
@@ -30,12 +22,12 @@ func (h *DeviceFeatureHandler) Update(r *http.Request) (handler.ResponseWriter, 
 		return nil, fmt.Errorf("failed to convert to app device feature model: %w", err)
 	}
 
-	user, err := appContext.GetUser(r.Context())
+	user, err := appContext.GetUser(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)
 	}
 
-	newDeviceFeatureApp, err = h.deviceFeatureUseCase.Upsert(r.Context(), deviceId, user, newDeviceFeatureApp)
+	newDeviceFeatureApp, err = h.deviceFeatureUseCase.Upsert(ctx, deviceId, user, newDeviceFeatureApp)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upsert device feature: %w", err)
 	}
@@ -45,5 +37,5 @@ func (h *DeviceFeatureHandler) Update(r *http.Request) (handler.ResponseWriter, 
 		return nil, fmt.Errorf("error converting device feature to api model: %w", err)
 	}
 
-	return handler.RespondJSON(newDeviceFeatureApi), nil
+	return gen.UpsertDeviceFeature200JSONResponse(*newDeviceFeatureApi), nil
 }

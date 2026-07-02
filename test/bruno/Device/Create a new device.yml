@@ -7,7 +7,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/device"
+  url: "{{baseUrl}}/api/v1/device"
   body:
     type: json
     data: |-
@@ -27,7 +27,7 @@ examples:
   - name: 201 Response
     description: Device created successfully
     request:
-      url: "{{baseUrl}}/device"
+      url: "{{baseUrl}}/api/v1/device"
       method: POST
       body:
         type: json
@@ -52,7 +52,7 @@ examples:
           }
   - name: badJson
     request:
-      url: "{{baseUrl}}/device"
+      url: "{{baseUrl}}/api/v1/device"
       method: POST
       body:
         type: json
@@ -75,7 +75,7 @@ examples:
           }
   - name: invalidType
     request:
-      url: "{{baseUrl}}/device"
+      url: "{{baseUrl}}/api/v1/device"
       method: POST
       body:
         type: json
@@ -99,7 +99,7 @@ examples:
   - name: 401 Response
     description: Unauthorized - invalid or missing API key
     request:
-      url: "{{baseUrl}}/device"
+      url: "{{baseUrl}}/api/v1/device"
       method: POST
       body:
         type: json
@@ -123,7 +123,7 @@ examples:
   - name: 500 Response
     description: Internal server error
     request:
-      url: "{{baseUrl}}/device"
+      url: "{{baseUrl}}/api/v1/device"
       method: POST
       body:
         type: json

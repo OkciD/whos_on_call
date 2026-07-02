@@ -4,15 +4,11 @@ info:
   description: "API for managing devices, device features, and call status"
   version: "1.0.0"
 
-servers:
-  - url: http://127.0.0.1:8080/api/v1
-    description: "API v1"
-
 security:
   - ApiKeyAuth: []
 
 paths:
-  /status:
+  /api/v1/status:
     get:
       summary: "Get call status for all users"
       description: "Returns the current call status including all users, their devices and device features"
@@ -25,9 +21,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CallStatus"
+                $ref: "#/components/schemas/CallStatus"
               example:
                 - user:
                     id: 1
@@ -62,7 +56,7 @@ paths:
               example:
                 err_code: "internal"
 
-  /user:
+  /api/v1/user:
     get:
       summary: "Get current user"
       description: "Returns the authenticated user information"
@@ -96,7 +90,7 @@ paths:
               example:
                 err_code: "internal"
 
-  /device:
+  /api/v1/device:
     post:
       summary: "Create a new device"
       description: "Creates a new device for the authenticated user"
@@ -153,8 +147,8 @@ paths:
               example:
                 err_code: "internal"
 
-  /device/{deviceid}/feature:
-    post:
+  /api/v1/device/{deviceid}/feature:
+    put:
       summary: "Upsert device feature"
       description: "Creates or updates a device feature for the specified device"
       operationId: "upsertDeviceFeature"

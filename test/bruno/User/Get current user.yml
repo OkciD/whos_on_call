@@ -7,7 +7,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/user"
+  url: "{{baseUrl}}/api/v1/user"
   auth: inherit
 
 settings:
@@ -20,7 +20,7 @@ examples:
   - name: 200 Response
     description: Successful response
     request:
-      url: "{{baseUrl}}/user"
+      url: "{{baseUrl}}/api/v1/user"
       method: GET
     response:
       status: 200
@@ -38,7 +38,7 @@ examples:
   - name: 401 Response
     description: Unauthorized - invalid or missing API key
     request:
-      url: "{{baseUrl}}/user"
+      url: "{{baseUrl}}/api/v1/user"
       method: GET
     response:
       status: 401
@@ -55,7 +55,7 @@ examples:
   - name: 500 Response
     description: Internal server error
     request:
-      url: "{{baseUrl}}/user"
+      url: "{{baseUrl}}/api/v1/user"
       method: GET
     response:
       status: 500
