@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
 	"github.com/OkciD/whos_on_call/internal/server/user"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
@@ -19,7 +18,11 @@ func NewAuthMiddleware(logger logger.Logger, userUseCase user.UseCase) func(http
 			user, err := userUseCase.GetUserByApiKey(r.Context(), apiKey)
 			if err != nil {
 				logger.WithError(err).Error("failed to get user by api key")
-				handler.RespondJSONError(w, err)
+
+				// todo: не писать ответ "руками"
+				w.Header().Add("Content-Type", "application/json")
+				w.WriteHeader(http.StatusUnauthorized)
+				w.Write([]byte("{\"err_code\":\"unauthorized\"}"))
 				return
 			}
 

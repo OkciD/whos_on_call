@@ -5,8 +5,6 @@ import (
 
 	"runtime/debug"
 
-	"github.com/OkciD/whos_on_call/internal/server/pkg/http/handler"
-	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
@@ -20,7 +18,10 @@ func NewRecoveryMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Hand
 						"stack": string(debug.Stack()),
 					}).Error("panic occurred")
 
-					handler.RespondJSONError(w, appErrors.ErrInternal)
+					// todo: не писать ответ "руками"
+					w.Header().Add("Content-Type", "application/json")
+					w.WriteHeader(http.StatusInternalServerError)
+					w.Write([]byte("{\"err_code\":\"internal\"}"))
 				}
 			}()
 
