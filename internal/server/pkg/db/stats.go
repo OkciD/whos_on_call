@@ -31,6 +31,8 @@ func startDBMonitoring(db *sql.DB, logger loggerPkg.Logger, duration time.Durati
 }
 
 func stopDBMonitoring(logger loggerPkg.Logger) {
-	ticker.Stop()
-	logger.Debug("stop db stats ticker")
+	if ticker != nil {
+		ticker.Stop()
+		logger.Debug("stop db stats ticker")
+	}
 }
