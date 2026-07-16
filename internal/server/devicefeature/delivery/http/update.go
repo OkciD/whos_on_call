@@ -9,7 +9,8 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
-func (h *Handler) Update(ctx context.Context, request gen.UpsertDeviceFeatureRequestObject) (gen.UpsertDeviceFeatureResponseObject, error) {
+// PUT /api/v1/device/{deviceid}/feature
+func (h DeviceFeatureHandler) UpsertDeviceFeature(ctx context.Context, request gen.UpsertDeviceFeatureRequestObject) (gen.UpsertDeviceFeatureResponseObject, error) {
 	deviceId := int(request.Deviceid)
 
 	newDeviceFeatureInput := api.DeviceFeature{

@@ -5,18 +5,16 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-type Handler struct {
+type DeviceFeatureHandler struct {
 	logger logger.Logger
 
 	deviceFeatureUseCase devicefeature.UseCase
 }
 
-func New(logger logger.Logger, deviceFeatureUseCase devicefeature.UseCase) *Handler {
-	h := &Handler{
+func New(logger logger.Logger, deviceFeatureUseCase devicefeature.UseCase) DeviceFeatureHandler {
+	return DeviceFeatureHandler{
 		logger: logger,
 
 		deviceFeatureUseCase: deviceFeatureUseCase,
 	}
-
-	return h
 }

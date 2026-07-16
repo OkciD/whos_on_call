@@ -9,7 +9,8 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
-func (h *Handler) CreateDevice(ctx context.Context, request gen.CreateDeviceRequestObject) (gen.CreateDeviceResponseObject, error) {
+// POST /api/v1/device
+func (h DeviceHandler) CreateDevice(ctx context.Context, request gen.CreateDeviceRequestObject) (gen.CreateDeviceResponseObject, error) {
 	newDeviceInput := api.Device{
 		Name: request.Body.Name,
 		Type: request.Body.Type,

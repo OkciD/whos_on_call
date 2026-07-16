@@ -9,7 +9,8 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )
 
-func (h *Handler) GetUser(ctx context.Context, request gen.GetUserRequestObject) (gen.GetUserResponseObject, error) {
+// GET /api/v1/user
+func (h UserHandler) GetUser(ctx context.Context, request gen.GetUserRequestObject) (gen.GetUserResponseObject, error) {
 	user, err := appContext.GetUser(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)

@@ -89,10 +89,10 @@ func main() {
 	callStatusDelivery := callStatusDelivery.New(logger.ForModule("callstatus_delivery"), callStatusUseCase)
 
 	apiSrv := gen.NewStrictHandlerWithOptions(apiserver.ApiServer{
-		UserDelivery:          userDelivery,
-		DeviceDelivery:        deviceDelivery,
-		DeviceFeatureDelivery: deviceFeatureDelivery,
-		CallStatusDelivery:    callStatusDelivery,
+		UserHandler:          userDelivery,
+		DeviceHandler:        deviceDelivery,
+		DeviceFeatureHandler: deviceFeatureDelivery,
+		CallStatusHandler:    callStatusDelivery,
 	}, []gen.StrictMiddlewareFunc{}, gen.StrictHTTPServerOptions{})
 
 	spec, err := gen.GetSwagger()
