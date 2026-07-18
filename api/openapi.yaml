@@ -388,17 +388,48 @@ components:
     ErrorResponse:
       type: object
       required:
-        - err_code
+        - code
       properties:
-        err_code:
+        code:
           type: string
           description: "Error code"
           enum:
             - internal
             - unknown
-            - "not found"
-            - "not impl"
+            - route_not_found
+            - entity_not_found
             - unauthorized
-            - "bad json"
-            - "invalid url param"
             - duplicate
+            - invalid
+        body:
+          anyOf:
+            - $ref: '#/components/schemas/ErrorResponseWholeRequestError'
+            - $ref: '#/components/schemas/ErrorResponseRequestFieldError'
+        query:
+          anyOf:
+            - $ref: '#/components/schemas/ErrorResponseWholeRequestError'
+            - $ref: '#/components/schemas/ErrorResponseRequestFieldError'
+        urlParams:
+          anyOf:
+            - $ref: '#/components/schemas/ErrorResponseWholeRequestError'
+            - $ref: '#/components/schemas/ErrorResponseRequestFieldError'
+
+    ErrorResponseWholeRequestError:
+      type: string
+      enum:
+        - invalid
+        - required
+      x-enum-varnames:
+        - ErrorResponseWholeRequestErrorInvalid
+        - ErrorResponseWholeRequestErrorRequired
+
+    ErrorResponseRequestFieldError:
+      type: object
+      additionalProperties:
+        type: string
+        enum:
+          - invalid
+          - required
+        x-enum-varnames:
+          - ErrorResponseRequestFieldErrorInvalid
+          - ErrorResponseRequestFieldErrorRequired

@@ -25,10 +25,11 @@ func (u *UseCase) Upsert(
 	}).Info("upsert device feature")
 
 	device, err := u.deviceRepo.GetById(ctx, deviceID, user.ID)
-	device.User = user
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device from repo: %w", err)
 	}
+	device.User = user
+
 	u.logger.WithFields(logger.Fields{
 		"deviceID":   device.ID,
 		"deviceName": device.Name,

@@ -25,7 +25,7 @@ func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appMo
 		r.logger.WithError(err).Error("error selecting user")
 
 		if err == sql.ErrNoRows {
-			return nil, errors.ErrNotFound
+			return nil, errors.ErrEntityNotFound
 		}
 
 		return nil, fmt.Errorf("error selecting user: %w", err)

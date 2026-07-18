@@ -22,7 +22,7 @@ func NewAuthMiddleware(logger logger.Logger, userUseCase user.UseCase) func(http
 				// todo: не писать ответ "руками"
 				w.Header().Add("Content-Type", "application/json")
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("{\"err_code\":\"unauthorized\"}"))
+				w.Write([]byte("{\"code\":\"unauthorized\"}"))
 				return
 			}
 

@@ -93,7 +93,9 @@ func main() {
 		DeviceHandler:        deviceDelivery,
 		DeviceFeatureHandler: deviceFeatureDelivery,
 		CallStatusHandler:    callStatusDelivery,
-	}, []gen.StrictMiddlewareFunc{}, gen.StrictHTTPServerOptions{})
+	}, []gen.StrictMiddlewareFunc{}, gen.StrictHTTPServerOptions{
+		ResponseErrorHandlerFunc: apiserver.NewResponseErrorHandler(logger.ForModule("response_error_handler")),
+	})
 
 	spec, err := gen.GetSwagger()
 	if err != nil {
@@ -111,6 +113,7 @@ func main() {
 			Options: openapi3filter.Options{
 				AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
 			},
+			ErrorHandlerWithOpts: apiserver.NewOapiValidatorErrorHandler(logger.ForModule("oapi_validator_error_handler")),
 		}),
 		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),

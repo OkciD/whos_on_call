@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrDuplicate = errors.New("duplicate")
+	ErrInvalid   = errors.New("invalid")
 
 	ErrDeviceTypeInvalid = errors.New("invalid device type")
 

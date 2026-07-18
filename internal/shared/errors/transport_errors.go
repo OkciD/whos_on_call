@@ -3,11 +3,9 @@ package errors
 import "errors"
 
 var (
-	ErrInternal        = errors.New("internal")
-	ErrUnknown         = errors.New("unknown")
-	ErrNotFound        = errors.New("not found")
-	ErrNotImplemented  = errors.New("not implemented")
-	ErrUnauthorized    = errors.New("unauthorized")
-	ErrBadJSON         = errors.New("invalid json")
-	ErrInvalidUrlParam = errors.New("invalid url param")
+	ErrInternal           = errors.New("internal")
+	ErrUnknown            = errors.New("unknown")
+	ErrEntityNotFound     = errors.New("entity not found")
+	ErrRouteRouteNotFound = errors.New("route not found")
+	ErrUnauthorized       = errors.New("unauthorized")
 )

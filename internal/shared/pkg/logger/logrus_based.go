@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"net/http"
 	"os"
 	"time"
 
@@ -22,6 +23,20 @@ func (l logrusBasedLogger) WithFields(fields Fields) Logger {
 
 func (l logrusBasedLogger) WithError(err error) Logger {
 	return logrusBasedLogger{entry: l.entry.WithError(err)}
+}
+
+func (l logrusBasedLogger) WithRequest(r *http.Request) Logger {
+	if r == nil {
+		return l
+	}
+
+	return logrusBasedLogger{entry: l.entry.WithFields(logrus.Fields{
+		"request_ip":             r.RemoteAddr,
+		"request_method":         r.Method,
+		"request_uri":            r.RequestURI,
+		"request_content_type":   r.Header.Get("Content-Type"),
+		"request_content_length": r.ContentLength,
+	})}
 }
 
 func (l logrusBasedLogger) ForModule(moduleName string) Logger {

@@ -21,7 +21,7 @@ func NewRecoveryMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Hand
 					// todo: не писать ответ "руками"
 					w.Header().Add("Content-Type", "application/json")
 					w.WriteHeader(http.StatusInternalServerError)
-					w.Write([]byte("{\"err_code\":\"internal\"}"))
+					w.Write([]byte("{\"code\":\"internal\"}"))
 				}
 			}()
 

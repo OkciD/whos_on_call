@@ -4,7 +4,10 @@
 package api
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
@@ -86,36 +89,51 @@ func (e DeviceType) Valid() bool {
 	}
 }
 
-// Defines values for ErrorResponseErrCode.
+// Defines values for ErrorResponseCode.
 const (
-	BadJson         ErrorResponseErrCode = "bad json"
-	Duplicate       ErrorResponseErrCode = "duplicate"
-	Internal        ErrorResponseErrCode = "internal"
-	InvalidUrlParam ErrorResponseErrCode = "invalid url param"
-	NotFound        ErrorResponseErrCode = "not found"
-	NotImpl         ErrorResponseErrCode = "not impl"
-	Unauthorized    ErrorResponseErrCode = "unauthorized"
-	Unknown         ErrorResponseErrCode = "unknown"
+	Duplicate      ErrorResponseCode = "duplicate"
+	EntityNotFound ErrorResponseCode = "entity_not_found"
+	Internal       ErrorResponseCode = "internal"
+	Invalid        ErrorResponseCode = "invalid"
+	RouteNotFound  ErrorResponseCode = "route_not_found"
+	Unauthorized   ErrorResponseCode = "unauthorized"
+	Unknown        ErrorResponseCode = "unknown"
 )
 
-// Valid indicates whether the value is a known member of the ErrorResponseErrCode enum.
-func (e ErrorResponseErrCode) Valid() bool {
+// Valid indicates whether the value is a known member of the ErrorResponseCode enum.
+func (e ErrorResponseCode) Valid() bool {
 	switch e {
-	case BadJson:
-		return true
 	case Duplicate:
+		return true
+	case EntityNotFound:
 		return true
 	case Internal:
 		return true
-	case InvalidUrlParam:
+	case Invalid:
 		return true
-	case NotFound:
-		return true
-	case NotImpl:
+	case RouteNotFound:
 		return true
 	case Unauthorized:
 		return true
 	case Unknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ErrorResponseWholeRequestError.
+const (
+	ErrorResponseWholeRequestErrorInvalid  ErrorResponseWholeRequestError = "invalid"
+	ErrorResponseWholeRequestErrorRequired ErrorResponseWholeRequestError = "required"
+)
+
+// Valid indicates whether the value is a known member of the ErrorResponseWholeRequestError enum.
+func (e ErrorResponseWholeRequestError) Valid() bool {
+	switch e {
+	case ErrorResponseWholeRequestErrorInvalid:
+		return true
+	case ErrorResponseWholeRequestErrorRequired:
 		return true
 	default:
 		return false
@@ -198,12 +216,37 @@ type DeviceType string
 
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse struct {
-	// ErrCode Error code
-	ErrCode ErrorResponseErrCode `json:"err_code"`
+	Body *ErrorResponse_Body `json:"body,omitempty"`
+
+	// Code Error code
+	Code      ErrorResponseCode        `json:"code"`
+	Query     *ErrorResponse_Query     `json:"query,omitempty"`
+	UrlParams *ErrorResponse_UrlParams `json:"urlParams,omitempty"`
 }
 
-// ErrorResponseErrCode Error code
-type ErrorResponseErrCode string
+// ErrorResponse_Body defines model for ErrorResponse.Body.
+type ErrorResponse_Body struct {
+	union json.RawMessage
+}
+
+// ErrorResponseCode Error code
+type ErrorResponseCode string
+
+// ErrorResponse_Query defines model for ErrorResponse.Query.
+type ErrorResponse_Query struct {
+	union json.RawMessage
+}
+
+// ErrorResponse_UrlParams defines model for ErrorResponse.UrlParams.
+type ErrorResponse_UrlParams struct {
+	union json.RawMessage
+}
+
+// ErrorResponseRequestFieldError defines model for ErrorResponseRequestFieldError.
+type ErrorResponseRequestFieldError map[string]string
+
+// ErrorResponseWholeRequestError defines model for ErrorResponseWholeRequestError.
+type ErrorResponseWholeRequestError string
 
 // User defines model for User.
 type User struct {
@@ -228,3 +271,189 @@ type CreateDeviceJSONRequestBody = DeviceInput
 
 // UpsertDeviceFeatureJSONRequestBody defines body for UpsertDeviceFeature for application/json ContentType.
 type UpsertDeviceFeatureJSONRequestBody = DeviceFeatureInput
+
+// AsErrorResponseWholeRequestError returns the union data inside the ErrorResponse_Body as a ErrorResponseWholeRequestError
+func (t ErrorResponse_Body) AsErrorResponseWholeRequestError() (ErrorResponseWholeRequestError, error) {
+	var body ErrorResponseWholeRequestError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseWholeRequestError overwrites any union data inside the ErrorResponse_Body as the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_Body) FromErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseWholeRequestError performs a merge with any union data inside the ErrorResponse_Body, using the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_Body) MergeErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsErrorResponseRequestFieldError returns the union data inside the ErrorResponse_Body as a ErrorResponseRequestFieldError
+func (t ErrorResponse_Body) AsErrorResponseRequestFieldError() (ErrorResponseRequestFieldError, error) {
+	var body ErrorResponseRequestFieldError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseRequestFieldError overwrites any union data inside the ErrorResponse_Body as the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_Body) FromErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseRequestFieldError performs a merge with any union data inside the ErrorResponse_Body, using the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_Body) MergeErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ErrorResponse_Body) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ErrorResponse_Body) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsErrorResponseWholeRequestError returns the union data inside the ErrorResponse_Query as a ErrorResponseWholeRequestError
+func (t ErrorResponse_Query) AsErrorResponseWholeRequestError() (ErrorResponseWholeRequestError, error) {
+	var body ErrorResponseWholeRequestError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseWholeRequestError overwrites any union data inside the ErrorResponse_Query as the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_Query) FromErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseWholeRequestError performs a merge with any union data inside the ErrorResponse_Query, using the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_Query) MergeErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsErrorResponseRequestFieldError returns the union data inside the ErrorResponse_Query as a ErrorResponseRequestFieldError
+func (t ErrorResponse_Query) AsErrorResponseRequestFieldError() (ErrorResponseRequestFieldError, error) {
+	var body ErrorResponseRequestFieldError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseRequestFieldError overwrites any union data inside the ErrorResponse_Query as the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_Query) FromErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseRequestFieldError performs a merge with any union data inside the ErrorResponse_Query, using the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_Query) MergeErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ErrorResponse_Query) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ErrorResponse_Query) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsErrorResponseWholeRequestError returns the union data inside the ErrorResponse_UrlParams as a ErrorResponseWholeRequestError
+func (t ErrorResponse_UrlParams) AsErrorResponseWholeRequestError() (ErrorResponseWholeRequestError, error) {
+	var body ErrorResponseWholeRequestError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseWholeRequestError overwrites any union data inside the ErrorResponse_UrlParams as the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_UrlParams) FromErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseWholeRequestError performs a merge with any union data inside the ErrorResponse_UrlParams, using the provided ErrorResponseWholeRequestError
+func (t *ErrorResponse_UrlParams) MergeErrorResponseWholeRequestError(v ErrorResponseWholeRequestError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsErrorResponseRequestFieldError returns the union data inside the ErrorResponse_UrlParams as a ErrorResponseRequestFieldError
+func (t ErrorResponse_UrlParams) AsErrorResponseRequestFieldError() (ErrorResponseRequestFieldError, error) {
+	var body ErrorResponseRequestFieldError
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromErrorResponseRequestFieldError overwrites any union data inside the ErrorResponse_UrlParams as the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_UrlParams) FromErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeErrorResponseRequestFieldError performs a merge with any union data inside the ErrorResponse_UrlParams, using the provided ErrorResponseRequestFieldError
+func (t *ErrorResponse_UrlParams) MergeErrorResponseRequestFieldError(v ErrorResponseRequestFieldError) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t ErrorResponse_UrlParams) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *ErrorResponse_UrlParams) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}

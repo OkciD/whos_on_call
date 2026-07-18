@@ -10,19 +10,9 @@ import (
 func NewAccessLogMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			var (
-				ip     = r.RemoteAddr
-				method = r.Method
-				url    = r.URL.String()
-				reqId  = context.GetRequestId(r.Context())
-			)
-
-			logger.WithFields(loggerPkg.Fields{
-				"ip":     ip,
-				"method": method,
-				"url":    url,
-				"reqId":  reqId,
-			}).Info("access log")
+			logger.WithRequest(r).WithField(
+				"reqId", context.GetRequestId(r.Context()),
+			).Info("access log")
 
 			next.ServeHTTP(w, r)
 		})

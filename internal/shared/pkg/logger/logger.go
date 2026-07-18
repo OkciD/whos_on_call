@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"maps"
+	"net/http"
 )
 
 type Fields map[string]any
@@ -15,6 +16,7 @@ type Logger interface {
 	WithField(key string, value any) Logger
 	WithFields(fields Fields) Logger
 	WithError(err error) Logger
+	WithRequest(r *http.Request) Logger
 	WithContext(ctx context.Context) Logger
 	ForModule(moduleName string) Logger
 

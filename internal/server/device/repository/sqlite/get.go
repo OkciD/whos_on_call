@@ -19,7 +19,7 @@ func (r *Repository) GetById(ctx context.Context, deviceID int, userID int) (*ap
 		r.logger.WithError(err).Error("error selecting device by id and user")
 
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("%w: no sql rows for device %d", appErrors.ErrNotFound, deviceID)
+			return nil, fmt.Errorf("%w: no sql rows for device %d", appErrors.ErrEntityNotFound, deviceID)
 		}
 
 		return nil, fmt.Errorf("error selecting device: %w", err)
