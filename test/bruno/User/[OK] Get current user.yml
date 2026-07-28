@@ -1,0 +1,16 @@
+info:
+  name: "[OK] Get current user"
+  type: http
+  seq: 1
+  tags:
+    - User
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/user"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+
+docs: Returns the authenticated user information

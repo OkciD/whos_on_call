@@ -1,0 +1,16 @@
+info:
+  name: "[ERR] No auth"
+  type: http
+  seq: 2
+  tags:
+    - User
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/user"
+  auth: noauth
+
+settings:
+  encodeUrl: true
+
+docs: Returns error when no auth header provided

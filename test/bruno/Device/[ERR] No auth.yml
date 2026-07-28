@@ -1,0 +1,22 @@
+info:
+  name: "[ERR] No auth"
+  type: http
+  seq: 6
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/device"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Game Station",
+        "type": "pc"
+      }
+
+settings:
+  encodeUrl: true
+
+docs: Error when no auth

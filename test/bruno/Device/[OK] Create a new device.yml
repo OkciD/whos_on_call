@@ -1,0 +1,23 @@
+info:
+  name: "[OK] Create a new device"
+  type: http
+  seq: 1
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/device"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Game Station",
+        "type": "pc"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+
+docs: Creates a new device for the authenticated user

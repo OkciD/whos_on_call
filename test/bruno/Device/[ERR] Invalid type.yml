@@ -1,0 +1,23 @@
+info:
+  name: "[ERR] Invalid type"
+  type: http
+  seq: 2
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/device"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Game Station",
+        "type": "lolkek"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+
+docs: Invalid "type" field

@@ -1,0 +1,22 @@
+info:
+  name: "[ERR] Missing type"
+  type: http
+  seq: 3
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/device"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Game Station"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+
+docs: Missing "type" field

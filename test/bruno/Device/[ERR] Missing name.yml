@@ -1,0 +1,22 @@
+info:
+  name: "[ERR] Missing name"
+  type: http
+  seq: 4
+  tags:
+    - Device
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/device"
+  body:
+    type: json
+    data: |-
+      {
+        "type": "pc"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+
+docs: Missing "name" field
