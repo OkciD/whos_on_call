@@ -20,7 +20,9 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 
 	switch d.Type {
 	case int8(appModels.DeviceTypePC):
+		fallthrough
 	case int8(appModels.DeviceTypeLaptop):
+		fallthrough
 	case int8(appModels.DeviceTypeMobile):
 		appDevice.Type = appModels.DeviceType(d.Type)
 	default:
@@ -39,7 +41,9 @@ func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 
 	switch appDevice.Type {
 	case appModels.DeviceTypePC:
+		fallthrough
 	case appModels.DeviceTypeLaptop:
+		fallthrough
 	case appModels.DeviceTypeMobile:
 		dbDevice.Type = int8(appDevice.Type)
 	default:

@@ -22,6 +22,7 @@ func (df *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 
 	switch df.Type {
 	case int8(appModels.DeviceFeatureTypeMic):
+		fallthrough
 	case int8(appModels.DeviceFeatureTypeCamera):
 		appDeviceFeature.Type = appModels.DeviceFeatureType(df.Type)
 	default:
@@ -30,6 +31,7 @@ func (df *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 
 	switch df.Status {
 	case int8(appModels.DeviceFeatureStatusInactive):
+		fallthrough
 	case int8(appModels.DeviceFeatureStatusActive):
 		appDeviceFeature.Status = appModels.DeviceFeatureStatus(df.Status)
 	}
@@ -51,6 +53,7 @@ func FromDeviceFeatureAppModel(
 
 	switch appDeviceFeature.Type {
 	case appModels.DeviceFeatureTypeMic:
+		fallthrough
 	case appModels.DeviceFeatureTypeCamera:
 		dbDeviceFeature.Type = int8(appDeviceFeature.Type)
 	default:
@@ -59,6 +62,7 @@ func FromDeviceFeatureAppModel(
 
 	switch appDeviceFeature.Status {
 	case appModels.DeviceFeatureStatusInactive:
+		fallthrough
 	case appModels.DeviceFeatureStatusActive:
 		dbDeviceFeature.Status = int8(appDeviceFeature.Status)
 	default:
