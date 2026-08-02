@@ -78,8 +78,10 @@ func main() {
 	deviceRepo := deviceRepositorySqlite.New(logger.ForModule("device_repo"), db)
 	deviceFeatureRepo := deviceFeatureRepositorySqlite.New(logger.ForModule("devicefeature_repo"), db)
 
+	txManager := dbPkg.NewTxManager(db)
+
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
-	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), deviceRepo)
+	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), txManager, deviceRepo, deviceFeatureRepo)
 	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
 	callStatusUseCase := callStatusUseCase.New(logger.ForModule("callstatus_usecase"), cfg.CallStatus.UseCase, userRepo, deviceRepo, deviceFeatureRepo)
 

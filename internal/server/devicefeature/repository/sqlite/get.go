@@ -17,7 +17,7 @@ func (r *Repository) GetByDeviceId(
 ) (*appModels.DeviceFeature, error) {
 	result := dbModels.DeviceFeature{}
 
-	row := r.db.QueryRowContext(ctx, "SELECT id, type, status, last_active, device_id FROM device_features WHERE device_id = ? AND type = ?", deviceID, deviceFeatureType)
+	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, type, status, last_active, device_id FROM device_features WHERE device_id = ? AND type = ?", deviceID, deviceFeatureType)
 
 	if err := row.Scan(&result.ID, &result.Type, &result.Status, &result.LastActive, &result.DeviceID); err != nil {
 		r.logger.WithError(err).Error("error selecting device feature by device id")

@@ -18,7 +18,7 @@ func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*mod
 		return nil, fmt.Errorf("failed to convert device model for creation: %w", err)
 	}
 
-	result, err := r.db.ExecContext(ctx, "INSERT INTO devices (name, type, user_id) VALUES (?, ?, ?)", dbNewDevice.Name, dbNewDevice.Type, dbNewDevice.UserID)
+	result, err := r.GetExecutor(ctx).ExecContext(ctx, "INSERT INTO devices (name, type, user_id) VALUES (?, ?, ?)", dbNewDevice.Name, dbNewDevice.Type, dbNewDevice.UserID)
 	if err != nil {
 		if sqliteError, ok := err.(sqlite.Error); ok {
 			if sqliteError.Code == sqlite.ErrConstraint && sqliteError.ExtendedCode == sqlite.ErrConstraintUnique {

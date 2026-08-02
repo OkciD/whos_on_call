@@ -11,7 +11,7 @@ import (
 func (r *Repository) List(ctx context.Context) ([]appModels.User, error) {
 	dbUsers := make([]dbModels.User, 0, 4)
 
-	rows, err := r.db.QueryContext(ctx, "SELECT id, name FROM users")
+	rows, err := r.GetExecutor(ctx).QueryContext(ctx, "SELECT id, name FROM users")
 	if err != nil {
 		return nil, fmt.Errorf("select all users failed: %w", err)
 	}

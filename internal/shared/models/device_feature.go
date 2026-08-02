@@ -25,6 +25,8 @@ func (t DeviceFeatureType) String() string {
 	}
 }
 
+var DeviceFeatureTypes = [2]DeviceFeatureType{DeviceFeatureTypeMic, DeviceFeatureTypeCamera}
+
 type DeviceFeatureStatus int8
 
 const (

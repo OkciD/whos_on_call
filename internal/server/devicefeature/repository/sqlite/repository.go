@@ -1,22 +1,21 @@
 package sqlite
 
 import (
-	"database/sql"
-
 	"github.com/OkciD/whos_on_call/internal/server/devicefeature"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 type Repository struct {
-	logger logger.Logger
+	db.WithExecutor
 
-	db *sql.DB
+	logger logger.Logger
 }
 
-func New(logger logger.Logger, db *sql.DB) devicefeature.Repository {
+func New(logger logger.Logger, e db.Executor) devicefeature.Repository {
 	return &Repository{
-		logger: logger,
+		WithExecutor: db.NewWithExecutor(e),
 
-		db: db,
+		logger: logger,
 	}
 }

@@ -17,7 +17,7 @@ func (r *Repository) Update(
 		return fmt.Errorf("failed device feature convertion from app to db: %w", err)
 	}
 
-	_, err = r.db.ExecContext(
+	_, err = r.GetExecutor(ctx).ExecContext(
 		ctx,
 		"UPDATE device_features SET status = ?, last_active = ? WHERE id = ?",
 		dbUpdatedDeviceFeature.Status,

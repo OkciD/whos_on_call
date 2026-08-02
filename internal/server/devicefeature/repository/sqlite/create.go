@@ -17,7 +17,7 @@ func (r *Repository) Create(
 		return nil, fmt.Errorf("failed device feature convertion from app to db: %w", err)
 	}
 
-	result, err := r.db.ExecContext(
+	result, err := r.GetExecutor(ctx).ExecContext(
 		ctx,
 		"INSERT INTO device_features (type, status, last_active, device_id) VALUES (?, ?, ?, ?)",
 		dbNewDeviceFeature.Type,

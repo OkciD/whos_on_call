@@ -11,7 +11,7 @@ import (
 func (r *Repository) ListByUserID(ctx context.Context, userID int) ([]appModels.Device, error) {
 	dbDevices := make([]dbModels.Device, 0, 4)
 
-	rows, err := r.db.QueryContext(ctx, "SELECT id, name, type FROM devices WHERE user_id = ?", userID)
+	rows, err := r.GetExecutor(ctx).QueryContext(ctx, "SELECT id, name, type FROM devices WHERE user_id = ?", userID)
 	if err != nil {
 		return nil, fmt.Errorf("select devices by user query failed: %w", err)
 	}
