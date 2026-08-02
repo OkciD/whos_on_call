@@ -49,10 +49,13 @@ db/populate:
 	sqlite3 $(LOCAL_DB_PATH) < $(LOCAL_DB_DIR)/test_data.sql
 
 .PHONY: gen/api
-gen/api: gen/api/models gen/api/server
+gen/api: gen/api/models gen/api/server gen/api/client
 
 gen/api/models:
-	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -package api -generate "types" $(ROOT_DIR)/api/openapi.yaml > $(ROOT_DIR)/internal/shared/models/api/gen.go
+	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/models.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml
 
 gen/api/server:
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/server.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml
+
+gen/api/client:
+	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/client.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml

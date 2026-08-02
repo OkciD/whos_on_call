@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/oapi-codegen/oapi-codegen/HEAD/configuration-schema.json
+package: gen
+
+generate:
+  client: true
+
+output: cmd/client/apiclient/gen/gen.go
+
+additional-imports:
+  - package: github.com/OkciD/whos_on_call/internal/shared/models/api
+    alias: .
