@@ -267,6 +267,8 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	return m
 }
 
+type ErrorResponseJSONResponse ErrorResponse
+
 type CreateDeviceRequestObject struct {
 	Body *CreateDeviceJSONRequestBody
 }
@@ -284,31 +286,16 @@ func (response CreateDevice201JSONResponse) VisitCreateDeviceResponse(w http.Res
 	return json.NewEncoder(w).Encode(response)
 }
 
-type CreateDevice400JSONResponse ErrorResponse
-
-func (response CreateDevice400JSONResponse) VisitCreateDeviceResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
+type CreateDevicedefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type CreateDevice401JSONResponse ErrorResponse
-
-func (response CreateDevice401JSONResponse) VisitCreateDeviceResponse(w http.ResponseWriter) error {
+func (response CreateDevicedefaultJSONResponse) VisitCreateDeviceResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
-}
-
-type CreateDevice500JSONResponse ErrorResponse
-
-func (response CreateDevice500JSONResponse) VisitCreateDeviceResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type UpsertDeviceFeatureRequestObject struct {
@@ -329,40 +316,16 @@ func (response UpsertDeviceFeature200JSONResponse) VisitUpsertDeviceFeatureRespo
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpsertDeviceFeature400JSONResponse ErrorResponse
-
-func (response UpsertDeviceFeature400JSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
+type UpsertDeviceFeaturedefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type UpsertDeviceFeature401JSONResponse ErrorResponse
-
-func (response UpsertDeviceFeature401JSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
+func (response UpsertDeviceFeaturedefaultJSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
-}
-
-type UpsertDeviceFeature404JSONResponse ErrorResponse
-
-func (response UpsertDeviceFeature404JSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type UpsertDeviceFeature500JSONResponse ErrorResponse
-
-func (response UpsertDeviceFeature500JSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type GetStatusRequestObject struct {
@@ -381,22 +344,16 @@ func (response GetStatus200JSONResponse) VisitGetStatusResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetStatus401JSONResponse ErrorResponse
-
-func (response GetStatus401JSONResponse) VisitGetStatusResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
+type GetStatusdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type GetStatus500JSONResponse ErrorResponse
-
-func (response GetStatus500JSONResponse) VisitGetStatusResponse(w http.ResponseWriter) error {
+func (response GetStatusdefaultJSONResponse) VisitGetStatusResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 type GetUserRequestObject struct {
@@ -415,22 +372,16 @@ func (response GetUser200JSONResponse) VisitGetUserResponse(w http.ResponseWrite
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetUser401JSONResponse ErrorResponse
-
-func (response GetUser401JSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(401)
-
-	return json.NewEncoder(w).Encode(response)
+type GetUserdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
 }
 
-type GetUser500JSONResponse ErrorResponse
-
-func (response GetUser500JSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
+func (response GetUserdefaultJSONResponse) VisitGetUserResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
+	w.WriteHeader(response.StatusCode)
 
-	return json.NewEncoder(w).Encode(response)
+	return json.NewEncoder(w).Encode(response.Body)
 }
 
 // StrictServerInterface represents all server handlers.
@@ -593,33 +544,30 @@ func (sh *strictHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

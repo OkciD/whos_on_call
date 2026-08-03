@@ -384,9 +384,7 @@ type CreateDeviceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *Device
-	JSON400      *ErrorResponse
-	JSON401      *ErrorResponse
-	JSON500      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -409,10 +407,7 @@ type UpsertDeviceFeatureResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *DeviceFeature
-	JSON400      *ErrorResponse
-	JSON401      *ErrorResponse
-	JSON404      *ErrorResponse
-	JSON500      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -435,8 +430,7 @@ type GetStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CallStatus
-	JSON401      *ErrorResponse
-	JSON500      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -459,8 +453,7 @@ type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *User
-	JSON401      *ErrorResponse
-	JSON500      *ErrorResponse
+	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
@@ -552,26 +545,12 @@ func ParseCreateDeviceResponse(rsp *http.Response) (*CreateDeviceResponse, error
 		}
 		response.JSON201 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -599,33 +578,12 @@ func ParseUpsertDeviceFeatureResponse(rsp *http.Response) (*UpsertDeviceFeatureR
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON400 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -653,19 +611,12 @@ func ParseGetStatusResponse(rsp *http.Response) (*GetStatusResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 
@@ -693,19 +644,12 @@ func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 		}
 		response.JSON200 = &dest
 
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON500 = &dest
+		response.JSONDefault = &dest
 
 	}
 

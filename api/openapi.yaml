@@ -39,22 +39,8 @@ paths:
                         - id: 2
                           type: "camera"
                           status: "inactive"
-        "401":
-          description: "Unauthorized - invalid or missing API key"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "unauthorized"
-        "500":
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "internal"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
 
   /api/v1/user:
     get:
@@ -73,22 +59,8 @@ paths:
               example:
                 id: 1
                 name: "John Doe"
-        "401":
-          description: "Unauthorized - invalid or missing API key"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "unauthorized"
-        "500":
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "internal"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
 
   /api/v1/device:
     post:
@@ -117,35 +89,8 @@ paths:
                 id: 1
                 name: "MacBook Pro"
                 type: "laptop"
-        "400":
-          description: "Bad request - invalid JSON or invalid device type"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                badJson:
-                  value:
-                    err_code: "bad json"
-                invalidType:
-                  value:
-                    err_code: "invalid device type"
-        "401":
-          description: "Unauthorized - invalid or missing API key"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "unauthorized"
-        "500":
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "internal"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
 
   /api/v1/device/{deviceid}/feature:
     put:
@@ -183,49 +128,8 @@ paths:
                 type: "mic"
                 status: "active"
                 lastActive: "2026-04-01T01:00:00Z"
-        "400":
-          description: "Bad request - invalid JSON, invalid device ID, or invalid feature type/status"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              examples:
-                badJson:
-                  value:
-                    err_code: "bad json"
-                invalidUrlParam:
-                  value:
-                    err_code: "invalid url param"
-                invalidFeatureType:
-                  value:
-                    err_code: "invalid device feature type"
-                invalidFeatureStatus:
-                  value:
-                    err_code: "invalid device feature status"
-        "401":
-          description: "Unauthorized - invalid or missing API key"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "unauthorized"
-        "404":
-          description: "Device feature not found"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "not found"
-        "500":
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                err_code: "internal"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
 
 components:
   securitySchemes:
@@ -234,6 +138,14 @@ components:
       in: header
       name: X-Api-Key
       description: "API key for authentication"
+
+  responses:
+    ErrorResponse:
+      description: "Any error"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
     User:
