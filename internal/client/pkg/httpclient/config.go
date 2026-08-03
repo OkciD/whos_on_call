@@ -4,6 +4,10 @@ import "github.com/OkciD/whos_on_call/internal/shared/pkg/duration"
 
 type Config struct {
 	Timeout duration.MarshallableDuration `json:"timeout"`
-	ApiKey  string                        `json:"apiKey"`
-	BaseURL string                        `json:"baseUrl"`
+
+	Logging struct {
+		Request struct {
+			HideHeaders []string `json:"hideHeaders"`
+		} `json:"request"`
+	} `json:"logging"`
 }

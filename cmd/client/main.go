@@ -5,10 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/client/pkg/apiclient"
 	"github.com/OkciD/whos_on_call/internal/client/pkg/apiclient/gen"
+	"github.com/OkciD/whos_on_call/internal/client/pkg/httpclient"
 	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
@@ -29,11 +29,11 @@ func main() {
 
 	logger := loggerPkg.NewLogrusBasedLogger(&cfg.Logger)
 
-	hc := http.Client{}
+	hc := httpclient.New(logger.ForModule("http_client"), cfg.ApiClient.HTTPClientConfig)
 	c, err := gen.NewClientWithResponses(
-		cfg.HttpClient.BaseURL,
+		cfg.ApiClient.BaseURL,
 		gen.WithHTTPClient(&hc),
-		gen.WithRequestEditorFn(apiclient.NewAuthRequestEditor(cfg.HttpClient.ApiKey)),
+		gen.WithRequestEditorFn(apiclient.NewAuthRequestEditor(cfg.ApiClient.ApiKey)),
 	)
 	if err != nil {
 		log.Fatal(err)

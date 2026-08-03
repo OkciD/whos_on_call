@@ -2,41 +2,51 @@ package httpclient
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"net/http/httputil"
 )
 
-func (c *HTTPClient) Do(ctx context.Context, req *http.Request, responseBody any) (*http.Response, error) {
-	req = req.WithContext(ctx)
+func (c *HTTPClient) logRequest(req *http.Request) {
+	reqCopy := req.Clone(context.Background())
 
-	resp, err := c.client.Do(req)
-	if err != nil {
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		default:
+	for _, headerName := range c.config.Logging.Request.HideHeaders {
+		if reqCopy.Header.Get(headerName) != "" {
+			reqCopy.Header.Set(headerName, "<hidden>")
 		}
+	}
 
+	reqBytes, err := httputil.DumpRequestOut(reqCopy, true)
+	if err != nil {
+		c.logger.WithError(err).Error("failed to dump request")
+		return
+	}
+
+	c.logger.WithField("request", string(reqBytes)).Debug("sending request")
+}
+
+func (c *HTTPClient) logResponse(resp *http.Response) {
+	respBytes, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		c.logger.WithError(err).Error("failed to dump response")
+		return
+	}
+
+	c.logger.WithField("response", string(respBytes)).Debug("got response")
+}
+
+func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
+	// todo: assign request id
+
+	c.logRequest(req)
+
+	resp, err := c.Client.Do(req)
+
+	if err != nil {
 		return nil, fmt.Errorf("failed to do request: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if c := resp.StatusCode; c < 200 || c > 299 {
-		return nil,
-			fmt.Errorf("%s %s returned invalid status code %d", resp.Request.Method, resp.Request.URL, resp.StatusCode)
-	}
-
-	respBodyBytes, err := io.ReadAll(req.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response body bytes: %w", err)
-	}
-
-	err = json.Unmarshal(respBodyBytes, responseBody)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response body bytes: %w", err)
-	}
+	c.logResponse(resp)
 
 	return resp, nil
 }
