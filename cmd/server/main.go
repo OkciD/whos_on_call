@@ -16,8 +16,6 @@ import (
 
 	nethttpmiddleware "github.com/oapi-codegen/nethttp-middleware"
 
-	"github.com/OkciD/whos_on_call/cmd/server/apiserver"
-	"github.com/OkciD/whos_on_call/cmd/server/apiserver/gen"
 	callStatusDelivery "github.com/OkciD/whos_on_call/internal/server/callstatus/delivery/http"
 	callStatusUseCase "github.com/OkciD/whos_on_call/internal/server/callstatus/usecase"
 	deviceHttpDelivery "github.com/OkciD/whos_on_call/internal/server/device/delivery/http"
@@ -26,6 +24,8 @@ import (
 	deviceFeatureDelivery "github.com/OkciD/whos_on_call/internal/server/devicefeature/delivery/http"
 	deviceFeatureRepositorySqlite "github.com/OkciD/whos_on_call/internal/server/devicefeature/repository/sqlite"
 	deviceFeatureUseCase "github.com/OkciD/whos_on_call/internal/server/devicefeature/usecase"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/apiserver"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/apiserver/gen"
 	dbPkg "github.com/OkciD/whos_on_call/internal/server/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/db/migrations"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/middleware"

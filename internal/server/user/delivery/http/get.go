@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/OkciD/whos_on_call/cmd/server/apiserver/gen"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/apiserver/gen"
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/shared/models/api"
 )

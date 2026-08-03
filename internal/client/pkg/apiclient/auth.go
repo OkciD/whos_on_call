@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/cmd/client/apiclient/gen"
+	"github.com/OkciD/whos_on_call/internal/client/pkg/apiclient/gen"
 )
 
 const API_KEY_HEADER = "X-Api-Key"

@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/OkciD/whos_on_call/cmd/client/apiclient"
-	"github.com/OkciD/whos_on_call/cmd/client/apiclient/gen"
+	"github.com/OkciD/whos_on_call/internal/client/pkg/apiclient"
+	"github.com/OkciD/whos_on_call/internal/client/pkg/apiclient/gen"
 	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
 	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
