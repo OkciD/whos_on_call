@@ -4,7 +4,7 @@ package: gen
 generate:
   client: true
 
-output: internal/client/pkg/apiclient/gen/gen.go
+output: internal/client/apiclient/gen/gen.go
 
 additional-imports:
   - package: github.com/OkciD/whos_on_call/internal/shared/models/api

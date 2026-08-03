@@ -16,5 +16,9 @@
         },
         "apiKey": "lolkek",
         "baseUrl": "http://127.0.0.1:8080"
+    },
+    "device": {
+        "type": "laptop",
+        "name": "Workstation"
     }
 }

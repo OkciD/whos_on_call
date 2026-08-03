@@ -45,8 +45,9 @@ func ErrorToResp(err error) ErrorResp {
 var respToErrMap = utils.ReverseMap(errToRespMap)
 var defaultErr = appErrors.ErrUnknown
 
-func RespToError(errResp ErrorResp) error {
-	if err, ok := respToErrMap[errResp]; ok {
+func RespToError(statusCode int, errResp api.ErrorResponse) error {
+	key := newErrorResp(statusCode, errResp.Code)
+	if err, ok := respToErrMap[key]; ok {
 		return err
 	}
 
