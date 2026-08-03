@@ -14,6 +14,7 @@ func (u *UseCase) Calculate(ctx context.Context) (models.CallStatus, error) {
 	}
 
 	status := make(models.CallStatus, 0, len(users))
+	// todo: распараллелить
 	for _, user := range users {
 		devices, err := u.deviceRepo.ListByUserID(ctx, user.ID)
 		if err != nil {
