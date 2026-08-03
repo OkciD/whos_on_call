@@ -16,16 +16,24 @@ build/bin/client:
 clean:
 	rm -f $(BIN_DIR)/*
 
-.PHONY: run
-run: clean build
+.PHONY: run/server
+run/server: clean build
 	$(BIN_DIR)/server -config=$(ROOT_DIR)/configs/server_local.json
 
 .PHONY: debug/server
 debug/server:
 	dlv debug -l 127.0.0.1:38697 --headless $(ROOT_DIR)/cmd/server/*.go -- -config=./configs/server_local.json
 
+.PHONY: run/client
+run/client: clean build
+	$(BIN_DIR)/client -config=$(ROOT_DIR)/configs/client_local.json
+
+.PHONY: debug/client
+debug/client:
+	dlv debug -l 127.0.0.1:38697 --headless $(ROOT_DIR)/cmd/client/*.go -- -config=./configs/client_local.json
+
 .PHONY: start
-start: run
+start: run/server
 
 .PHONY: tidy
 tidy:

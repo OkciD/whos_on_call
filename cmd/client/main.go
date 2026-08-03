@@ -1,14 +1,16 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 
-	deviceRepository "github.com/OkciD/whos_on_call/internal/client/device/repository/api"
-	"github.com/OkciD/whos_on_call/internal/client/pkg/httpclient"
+	"github.com/OkciD/whos_on_call/cmd/client/apiclient"
+	"github.com/OkciD/whos_on_call/cmd/client/apiclient/gen"
 	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
-	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
+	loggerPkg "github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
 func main() {
@@ -25,14 +27,24 @@ func main() {
 		log.Fatal(fmt.Errorf("failed to read config: %w", err))
 	}
 
-	logger := logger.NewLogrusBasedLogger(&cfg.Logger)
+	logger := loggerPkg.NewLogrusBasedLogger(&cfg.Logger)
 
-	httpClient, err := httpclient.New(logger.ForModule("http_client"), cfg.HttpClient)
+	hc := http.Client{}
+	c, err := gen.NewClientWithResponses(
+		cfg.HttpClient.BaseURL,
+		gen.WithHTTPClient(&hc),
+		gen.WithRequestEditorFn(apiclient.NewAuthRequestEditor(cfg.HttpClient.ApiKey)),
+	)
 	if err != nil {
-		log.Fatal(fmt.Errorf("failed to init http client: %w", err))
+		log.Fatal(err)
 	}
 
-	_ = deviceRepository.New(logger.ForModule("device_repo"), httpClient)
-
-	logger.Info("hello world")
+	resp, err := c.GetUserWithResponse(context.TODO())
+	if err != nil {
+		logger.WithError(err).Fatal("failed to get user")
+	}
+	logger.WithFields(loggerPkg.Fields{
+		"id":   resp.JSON200.Id,
+		"name": resp.JSON200.Name,
+	}).Info("got user")
 }
