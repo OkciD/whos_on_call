@@ -266,6 +266,12 @@ type UserStatus struct {
 	User  User      `json:"user"`
 }
 
+// ListDevicesParams defines parameters for ListDevices.
+type ListDevicesParams struct {
+	Name *string     `form:"name,omitempty" json:"name,omitempty"`
+	Type *DeviceType `form:"type,omitempty" json:"type,omitempty"`
+}
+
 // CreateDeviceJSONRequestBody defines body for CreateDevice for application/json ContentType.
 type CreateDeviceJSONRequestBody = DeviceInput
 

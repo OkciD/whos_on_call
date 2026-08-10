@@ -30,3 +30,8 @@ type Device struct {
 	Type DeviceType
 	User *User
 }
+
+type DeviceListParams struct {
+	Name *string
+	Type *DeviceType
+}

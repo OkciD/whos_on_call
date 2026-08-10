@@ -31,6 +31,9 @@ type ServerInterface interface {
 	// Upsert device feature
 	// (PUT /api/v1/device/{deviceid}/feature)
 	UpsertDeviceFeature(w http.ResponseWriter, r *http.Request, deviceid int32)
+	// List user devices
+	// (GET /api/v1/devices)
+	ListDevices(w http.ResponseWriter, r *http.Request, params ListDevicesParams)
 	// Get call status for all users
 	// (GET /api/v1/status)
 	GetStatus(w http.ResponseWriter, r *http.Request)
@@ -90,6 +93,47 @@ func (siw *ServerInterfaceWrapper) UpsertDeviceFeature(w http.ResponseWriter, r 
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.UpsertDeviceFeature(w, r, deviceid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListDevices operation middleware
+func (siw *ServerInterfaceWrapper) ListDevices(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ApiKeyAuthScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListDevicesParams
+
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "name", r.URL.Query(), &params.Name, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "name", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "type", r.URL.Query(), &params.Type, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "type", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListDevices(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -261,6 +305,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 
 	m.HandleFunc("POST "+options.BaseURL+"/api/v1/device", wrapper.CreateDevice)
 	m.HandleFunc("PUT "+options.BaseURL+"/api/v1/device/{deviceid}/feature", wrapper.UpsertDeviceFeature)
+	m.HandleFunc("GET "+options.BaseURL+"/api/v1/devices", wrapper.ListDevices)
 	m.HandleFunc("GET "+options.BaseURL+"/api/v1/status", wrapper.GetStatus)
 	m.HandleFunc("GET "+options.BaseURL+"/api/v1/user", wrapper.GetUser)
 
@@ -322,6 +367,35 @@ type UpsertDeviceFeaturedefaultJSONResponse struct {
 }
 
 func (response UpsertDeviceFeaturedefaultJSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(response.StatusCode)
+
+	return json.NewEncoder(w).Encode(response.Body)
+}
+
+type ListDevicesRequestObject struct {
+	Params ListDevicesParams
+}
+
+type ListDevicesResponseObject interface {
+	VisitListDevicesResponse(w http.ResponseWriter) error
+}
+
+type ListDevices200JSONResponse []Device
+
+func (response ListDevices200JSONResponse) VisitListDevicesResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type ListDevicesdefaultJSONResponse struct {
+	Body       ErrorResponse
+	StatusCode int
+}
+
+func (response ListDevicesdefaultJSONResponse) VisitListDevicesResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(response.StatusCode)
 
@@ -392,6 +466,9 @@ type StrictServerInterface interface {
 	// Upsert device feature
 	// (PUT /api/v1/device/{deviceid}/feature)
 	UpsertDeviceFeature(ctx context.Context, request UpsertDeviceFeatureRequestObject) (UpsertDeviceFeatureResponseObject, error)
+	// List user devices
+	// (GET /api/v1/devices)
+	ListDevices(ctx context.Context, request ListDevicesRequestObject) (ListDevicesResponseObject, error)
 	// Get call status for all users
 	// (GET /api/v1/status)
 	GetStatus(ctx context.Context, request GetStatusRequestObject) (GetStatusResponseObject, error)
@@ -493,6 +570,32 @@ func (sh *strictHandler) UpsertDeviceFeature(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// ListDevices operation middleware
+func (sh *strictHandler) ListDevices(w http.ResponseWriter, r *http.Request, params ListDevicesParams) {
+	var request ListDevicesRequestObject
+
+	request.Params = params
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.ListDevices(ctx, request.(ListDevicesRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "ListDevices")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(ListDevicesResponseObject); ok {
+		if err := validResponse.VisitListDevicesResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
 // GetStatus operation middleware
 func (sh *strictHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
 	var request GetStatusRequestObject
@@ -544,30 +647,32 @@ func (sh *strictHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"/2cbI7ZQGwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

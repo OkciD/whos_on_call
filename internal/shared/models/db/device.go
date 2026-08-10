@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+
 	"github.com/OkciD/whos_on_call/internal/shared/errors"
 	appModels "github.com/OkciD/whos_on_call/internal/shared/models"
 )
@@ -51,4 +53,38 @@ func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 	}
 
 	return dbDevice, nil
+}
+
+type DeviceListParams struct {
+	Name sql.NullString
+	Type sql.NullInt16
+}
+
+func FromDeviceListParamsAppModel(appParams *appModels.DeviceListParams) (*DeviceListParams, error) {
+	dbParams := &DeviceListParams{}
+
+	if appParams.Name != nil {
+		dbParams.Name = sql.NullString{
+			String: *appParams.Name,
+			Valid:  true,
+		}
+	}
+
+	if appParams.Type != nil {
+		switch *appParams.Type {
+		case appModels.DeviceTypePC:
+			fallthrough
+		case appModels.DeviceTypeLaptop:
+			fallthrough
+		case appModels.DeviceTypeMobile:
+			dbParams.Type = sql.NullInt16{
+				Int16: int16(*appParams.Type),
+				Valid: true,
+			}
+		default:
+			return nil, errors.ErrDeviceTypeInvalid
+		}
+	}
+
+	return dbParams, nil
 }

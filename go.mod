@@ -1,6 +1,6 @@
 module github.com/OkciD/whos_on_call
 
-go 1.25.4
+go 1.26.6
 
 require (
 	github.com/getkin/kin-openapi v0.133.0

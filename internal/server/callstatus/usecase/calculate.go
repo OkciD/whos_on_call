@@ -16,7 +16,7 @@ func (u *UseCase) Calculate(ctx context.Context) (models.CallStatus, error) {
 	status := make(models.CallStatus, 0, len(users))
 	// todo: распараллелить
 	for _, user := range users {
-		devices, err := u.deviceRepo.ListByUserID(ctx, user.ID)
+		devices, err := u.deviceRepo.ListByUserID(ctx, user.ID, nil)
 		if err != nil {
 			return nil, fmt.Errorf("failed to list devices by user id %d: %w", user.ID, err)
 		}

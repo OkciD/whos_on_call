@@ -9,5 +9,5 @@ import (
 type Repository interface {
 	Create(ctx context.Context, newDevice *models.Device) (*models.Device, error)
 	GetById(ctx context.Context, deviceID int, userID int) (*models.Device, error)
-	ListByUserID(ctx context.Context, userID int) ([]models.Device, error)
+	ListByUserID(ctx context.Context, userID int, params *models.DeviceListParams) ([]models.Device, error)
 }

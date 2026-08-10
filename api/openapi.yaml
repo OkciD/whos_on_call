@@ -92,6 +92,36 @@ paths:
         default:
           $ref: "#/components/responses/ErrorResponse"
 
+  /api/v1/devices:
+    get:
+      summary: "List user devices"
+      description: "Returns list of all current users devices"
+      operationId: "listDevices"
+      tags:
+        - "Device"
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/DeviceType"
+      responses:
+        "200":
+          description: "List returned successfully"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Device"
+        default:
+          $ref: "#/components/responses/ErrorResponse"
+
   /api/v1/device/{deviceid}/feature:
     put:
       summary: "Upsert device feature"
