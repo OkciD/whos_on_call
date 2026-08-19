@@ -71,3 +71,30 @@ func (p *ListDevicesParams) ToAppModel() (*appModels.DeviceListParams, error) {
 
 	return appParams, nil
 }
+
+func FromDeviceListParamsAppModel(appParams *appModels.DeviceListParams) (*ListDevicesParams, error) {
+	apiParams := &ListDevicesParams{}
+
+	if appParams.Type != nil {
+		switch *appParams.Type {
+		case appModels.DeviceTypeLaptop:
+			apiParams.Type = new(DeviceTypeLaptop)
+		case appModels.DeviceTypeMobile:
+			apiParams.Type = new(DeviceTypeMobile)
+		case appModels.DeviceTypePC:
+			apiParams.Type = new(DeviceTypePC)
+		default:
+			return nil, errors.ErrDeviceTypeInvalid
+		}
+	}
+
+	if appParams.Name != nil {
+		apiParams.Name = appParams.Name
+	}
+
+	if apiParams.Name == nil && apiParams.Type == nil {
+		return nil, nil
+	}
+
+	return apiParams, nil
+}
