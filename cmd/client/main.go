@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"log"
 
@@ -15,20 +14,23 @@ import (
 )
 
 func main() {
-	configFilePathPtr := flag.String("config", "", "path to config file")
-
-	flag.Parse()
-
-	if configFilePathPtr == nil || *configFilePathPtr == "" {
-		log.Fatal("-config option required")
+	flags, err := readFlags()
+	if err != nil {
+		log.Fatalf("failed to parse flags: %s", err)
 	}
 
-	cfg, err := configUtils.ReadConfig[config](*configFilePathPtr)
+	cfg, err := configUtils.ReadConfig[config](flags.configPath)
 	if err != nil {
 		log.Fatal(fmt.Errorf("failed to read config: %w", err))
 	}
 
 	logger := loggerPkg.NewLogrusBasedLogger(&cfg.Logger)
+
+	logger.WithFields(loggerPkg.Fields{
+		"configPath":        flags.configPath,
+		"deviceFeatureType": flags.deviceFeatureType,
+		"event":             flags.event,
+	}).Info("flags read successfully")
 
 	apiClient, err := apiclient.New(
 		logger.ForModule("api_client"),

@@ -26,7 +26,7 @@ debug/server:
 
 .PHONY: run/client
 run/client: clean build
-	$(BIN_DIR)/client -config=$(ROOT_DIR)/configs/client_local.json
+	$(BIN_DIR)/client -config=$(ROOT_DIR)/configs/client_local.json $(if $(device),-device=$(device)) $(if $(event),-event=$(event))
 
 .PHONY: debug/client
 debug/client:
