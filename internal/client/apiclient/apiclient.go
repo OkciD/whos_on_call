@@ -14,6 +14,7 @@ type ApiClient interface {
 	GetUser(ctx context.Context) (*models.User, error)
 	CreateDevice(ctx context.Context, newDevice *models.Device) (*models.Device, error)
 	ListDevices(ctx context.Context, params *models.DeviceListParams) ([]models.Device, error)
+	UpdateDeviceFeature(ctx context.Context, newDeviceFeature *models.DeviceFeature) (*models.DeviceFeature, error)
 }
 
 type apiClient struct {

@@ -27,9 +27,9 @@ func main() {
 	logger := loggerPkg.NewLogrusBasedLogger(&cfg.Logger)
 
 	logger.WithFields(loggerPkg.Fields{
-		"configPath":        flags.configPath,
-		"deviceFeatureType": flags.deviceFeatureType,
-		"event":             flags.event,
+		"configPath":          flags.configPath,
+		"deviceFeatureType":   flags.deviceFeatureType,
+		"deviceFeatureStatus": flags.deviceFeatureStatus,
 	}).Info("flags read successfully")
 
 	apiClient, err := apiclient.New(
@@ -99,4 +99,19 @@ func main() {
 			"type": appDevice.Type,
 		}).Info("device successfully created")
 	}
+
+	newFeature, err := apiClient.UpdateDeviceFeature(context.TODO(), &models.DeviceFeature{
+		Type:   flags.deviceFeatureType,
+		Status: flags.deviceFeatureStatus,
+		Device: appDevice,
+	})
+	if err != nil {
+		logger.WithError(err).Error("error updating device feature")
+	}
+
+	logger.WithFields(loggerPkg.Fields{
+		"deviceFeatureId":     newFeature.ID,
+		"deviceFeatureType":   newFeature.Type,
+		"deviceFeatureStatus": newFeature.Status,
+	}).Info("device feature updated successfully")
 }

@@ -7,17 +7,10 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
 
-type deviceFeatureEvent string
-
-const (
-	deviceFeatureEventOn  deviceFeatureEvent = "on"
-	deviceFeatureEventOff deviceFeatureEvent = "off"
-)
-
 type params struct {
-	configPath        string
-	deviceFeatureType models.DeviceFeatureType
-	event             deviceFeatureEvent
+	configPath          string
+	deviceFeatureType   models.DeviceFeatureType
+	deviceFeatureStatus models.DeviceFeatureStatus
 }
 
 // OverSight-compatible flags
@@ -46,9 +39,9 @@ func readFlags() (*params, error) {
 
 	switch *eventPtr {
 	case "on":
-		params.event = deviceFeatureEventOn
+		params.deviceFeatureStatus = models.DeviceFeatureStatusActive
 	case "off":
-		params.event = deviceFeatureEventOff
+		params.deviceFeatureStatus = models.DeviceFeatureStatusInactive
 	case "":
 		return nil, errors.New("-event param required")
 	default:
