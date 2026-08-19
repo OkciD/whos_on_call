@@ -3,6 +3,9 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/OkciD/whos_on_call/internal/shared/models"
 )
@@ -16,14 +19,26 @@ type params struct {
 // OverSight-compatible flags
 // https://github.com/objective-see/OverSight
 func readFlags() (*params, error) {
-	configFilePathPtr := flag.String("config", "./config.json", "path to config file")
-	deviceFeatureTypePtr := flag.String("device", "", "device feature (mic/camera)")
-	eventPtr := flag.String("event", "", "device event (on/off)")
+	fs := flag.NewFlagSet("whos_on_call", flag.ContinueOnError)
 
-	flag.Parse()
+	configFilePathPtr := fs.String("config", "", "path to config file")
+	deviceFeatureTypePtr := fs.String("device", "", "device feature (mic/camera)")
+	eventPtr := fs.String("event", "", "device event (on/off)")
 
-	params := params{
-		configPath: *configFilePathPtr,
+	fs.Parse(os.Args[1:])
+
+	params := params{}
+
+	if *configFilePathPtr == "" {
+		currentPath, err := os.Executable()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get executable path: %w", err)
+		}
+
+		currentDir, _ := filepath.Split(currentPath)
+		params.configPath = filepath.Join(currentDir, "config.json")
+	} else {
+		params.configPath = *configFilePathPtr
 	}
 
 	switch *deviceFeatureTypePtr {
