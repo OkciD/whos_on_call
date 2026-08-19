@@ -275,8 +275,8 @@ type ListDevicesParams struct {
 // CreateDeviceJSONRequestBody defines body for CreateDevice for application/json ContentType.
 type CreateDeviceJSONRequestBody = DeviceInput
 
-// UpsertDeviceFeatureJSONRequestBody defines body for UpsertDeviceFeature for application/json ContentType.
-type UpsertDeviceFeatureJSONRequestBody = DeviceFeatureInput
+// UpdateDeviceFeatureJSONRequestBody defines body for UpdateDeviceFeature for application/json ContentType.
+type UpdateDeviceFeatureJSONRequestBody = DeviceFeatureInput
 
 // AsErrorResponseWholeRequestError returns the union data inside the ErrorResponse_Body as a ErrorResponseWholeRequestError
 func (t ErrorResponse_Body) AsErrorResponseWholeRequestError() (ErrorResponseWholeRequestError, error) {

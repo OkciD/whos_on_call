@@ -10,7 +10,7 @@ import (
 )
 
 // PUT /api/v1/device/{deviceid}/feature
-func (h DeviceFeatureHandler) UpsertDeviceFeature(ctx context.Context, request gen.UpsertDeviceFeatureRequestObject) (gen.UpsertDeviceFeatureResponseObject, error) {
+func (h DeviceFeatureHandler) UpdateDeviceFeature(ctx context.Context, request gen.UpdateDeviceFeatureRequestObject) (gen.UpdateDeviceFeatureResponseObject, error) {
 	deviceId := int(request.Deviceid)
 
 	newDeviceFeatureInput := api.DeviceFeature{
@@ -28,7 +28,7 @@ func (h DeviceFeatureHandler) UpsertDeviceFeature(ctx context.Context, request g
 		return nil, fmt.Errorf("failed to get user from request: %w", err)
 	}
 
-	newDeviceFeatureApp, err = h.deviceFeatureUseCase.Upsert(ctx, deviceId, user, newDeviceFeatureApp)
+	newDeviceFeatureApp, err = h.deviceFeatureUseCase.Update(ctx, deviceId, user, newDeviceFeatureApp)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upsert device feature: %w", err)
 	}
@@ -38,5 +38,5 @@ func (h DeviceFeatureHandler) UpsertDeviceFeature(ctx context.Context, request g
 		return nil, fmt.Errorf("error converting device feature to api model: %w", err)
 	}
 
-	return gen.UpsertDeviceFeature200JSONResponse(*newDeviceFeatureApi), nil
+	return gen.UpdateDeviceFeature200JSONResponse(*newDeviceFeatureApi), nil
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type UseCase interface {
-	Upsert(
+	Update(
 		ctx context.Context,
 		deviceId int,
 		user *models.User,

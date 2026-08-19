@@ -95,10 +95,10 @@ type ClientInterface interface {
 
 	CreateDevice(ctx context.Context, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpsertDeviceFeatureWithBody request with any body
-	UpsertDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateDeviceFeatureWithBody request with any body
+	UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpsertDeviceFeature(ctx context.Context, deviceid int32, body UpsertDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateDeviceFeature(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListDevices request
 	ListDevices(ctx context.Context, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -134,8 +134,8 @@ func (c *Client) CreateDevice(ctx context.Context, body CreateDeviceJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpsertDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertDeviceFeatureRequestWithBody(c.Server, deviceid, contentType, body)
+func (c *Client) UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDeviceFeatureRequestWithBody(c.Server, deviceid, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +146,8 @@ func (c *Client) UpsertDeviceFeatureWithBody(ctx context.Context, deviceid int32
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpsertDeviceFeature(ctx context.Context, deviceid int32, body UpsertDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpsertDeviceFeatureRequest(c.Server, deviceid, body)
+func (c *Client) UpdateDeviceFeature(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDeviceFeatureRequest(c.Server, deviceid, body)
 	if err != nil {
 		return nil, err
 	}
@@ -234,19 +234,19 @@ func NewCreateDeviceRequestWithBody(server string, contentType string, body io.R
 	return req, nil
 }
 
-// NewUpsertDeviceFeatureRequest calls the generic UpsertDeviceFeature builder with application/json body
-func NewUpsertDeviceFeatureRequest(server string, deviceid int32, body UpsertDeviceFeatureJSONRequestBody) (*http.Request, error) {
+// NewUpdateDeviceFeatureRequest calls the generic UpdateDeviceFeature builder with application/json body
+func NewUpdateDeviceFeatureRequest(server string, deviceid int32, body UpdateDeviceFeatureJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewUpsertDeviceFeatureRequestWithBody(server, deviceid, "application/json", bodyReader)
+	return NewUpdateDeviceFeatureRequestWithBody(server, deviceid, "application/json", bodyReader)
 }
 
-// NewUpsertDeviceFeatureRequestWithBody generates requests for UpsertDeviceFeature with any type of body
-func NewUpsertDeviceFeatureRequestWithBody(server string, deviceid int32, contentType string, body io.Reader) (*http.Request, error) {
+// NewUpdateDeviceFeatureRequestWithBody generates requests for UpdateDeviceFeature with any type of body
+func NewUpdateDeviceFeatureRequestWithBody(server string, deviceid int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -448,10 +448,10 @@ type ClientWithResponsesInterface interface {
 
 	CreateDeviceWithResponse(ctx context.Context, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error)
 
-	// UpsertDeviceFeatureWithBodyWithResponse request with any body
-	UpsertDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDeviceFeatureResponse, error)
+	// UpdateDeviceFeatureWithBodyWithResponse request with any body
+	UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
 
-	UpsertDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpsertDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDeviceFeatureResponse, error)
+	UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
 
 	// ListDevicesWithResponse request
 	ListDevicesWithResponse(ctx context.Context, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*ListDevicesResponse, error)
@@ -486,7 +486,7 @@ func (r CreateDeviceResponse) StatusCode() int {
 	return 0
 }
 
-type UpsertDeviceFeatureResponse struct {
+type UpdateDeviceFeatureResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *DeviceFeature
@@ -494,7 +494,7 @@ type UpsertDeviceFeatureResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r UpsertDeviceFeatureResponse) Status() string {
+func (r UpdateDeviceFeatureResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -502,7 +502,7 @@ func (r UpsertDeviceFeatureResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpsertDeviceFeatureResponse) StatusCode() int {
+func (r UpdateDeviceFeatureResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -595,21 +595,21 @@ func (c *ClientWithResponses) CreateDeviceWithResponse(ctx context.Context, body
 	return ParseCreateDeviceResponse(rsp)
 }
 
-// UpsertDeviceFeatureWithBodyWithResponse request with arbitrary body returning *UpsertDeviceFeatureResponse
-func (c *ClientWithResponses) UpsertDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertDeviceFeatureResponse, error) {
-	rsp, err := c.UpsertDeviceFeatureWithBody(ctx, deviceid, contentType, body, reqEditors...)
+// UpdateDeviceFeatureWithBodyWithResponse request with arbitrary body returning *UpdateDeviceFeatureResponse
+func (c *ClientWithResponses) UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
+	rsp, err := c.UpdateDeviceFeatureWithBody(ctx, deviceid, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpsertDeviceFeatureResponse(rsp)
+	return ParseUpdateDeviceFeatureResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpsertDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpsertDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertDeviceFeatureResponse, error) {
-	rsp, err := c.UpsertDeviceFeature(ctx, deviceid, body, reqEditors...)
+func (c *ClientWithResponses) UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
+	rsp, err := c.UpdateDeviceFeature(ctx, deviceid, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpsertDeviceFeatureResponse(rsp)
+	return ParseUpdateDeviceFeatureResponse(rsp)
 }
 
 // ListDevicesWithResponse request returning *ListDevicesResponse
@@ -672,15 +672,15 @@ func ParseCreateDeviceResponse(rsp *http.Response) (*CreateDeviceResponse, error
 	return response, nil
 }
 
-// ParseUpsertDeviceFeatureResponse parses an HTTP response from a UpsertDeviceFeatureWithResponse call
-func ParseUpsertDeviceFeatureResponse(rsp *http.Response) (*UpsertDeviceFeatureResponse, error) {
+// ParseUpdateDeviceFeatureResponse parses an HTTP response from a UpdateDeviceFeatureWithResponse call
+func ParseUpdateDeviceFeatureResponse(rsp *http.Response) (*UpdateDeviceFeatureResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpsertDeviceFeatureResponse{
+	response := &UpdateDeviceFeatureResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -28,9 +28,9 @@ type ServerInterface interface {
 	// Create a new device
 	// (POST /api/v1/device)
 	CreateDevice(w http.ResponseWriter, r *http.Request)
-	// Upsert device feature
+	// Update device feature
 	// (PUT /api/v1/device/{deviceid}/feature)
-	UpsertDeviceFeature(w http.ResponseWriter, r *http.Request, deviceid int32)
+	UpdateDeviceFeature(w http.ResponseWriter, r *http.Request, deviceid int32)
 	// List user devices
 	// (GET /api/v1/devices)
 	ListDevices(w http.ResponseWriter, r *http.Request, params ListDevicesParams)
@@ -71,8 +71,8 @@ func (siw *ServerInterfaceWrapper) CreateDevice(w http.ResponseWriter, r *http.R
 	handler.ServeHTTP(w, r)
 }
 
-// UpsertDeviceFeature operation middleware
-func (siw *ServerInterfaceWrapper) UpsertDeviceFeature(w http.ResponseWriter, r *http.Request) {
+// UpdateDeviceFeature operation middleware
+func (siw *ServerInterfaceWrapper) UpdateDeviceFeature(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 
@@ -92,7 +92,7 @@ func (siw *ServerInterfaceWrapper) UpsertDeviceFeature(w http.ResponseWriter, r 
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.UpsertDeviceFeature(w, r, deviceid)
+		siw.Handler.UpdateDeviceFeature(w, r, deviceid)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -304,7 +304,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	}
 
 	m.HandleFunc("POST "+options.BaseURL+"/api/v1/device", wrapper.CreateDevice)
-	m.HandleFunc("PUT "+options.BaseURL+"/api/v1/device/{deviceid}/feature", wrapper.UpsertDeviceFeature)
+	m.HandleFunc("PUT "+options.BaseURL+"/api/v1/device/{deviceid}/feature", wrapper.UpdateDeviceFeature)
 	m.HandleFunc("GET "+options.BaseURL+"/api/v1/devices", wrapper.ListDevices)
 	m.HandleFunc("GET "+options.BaseURL+"/api/v1/status", wrapper.GetStatus)
 	m.HandleFunc("GET "+options.BaseURL+"/api/v1/user", wrapper.GetUser)
@@ -343,30 +343,30 @@ func (response CreateDevicedefaultJSONResponse) VisitCreateDeviceResponse(w http
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
-type UpsertDeviceFeatureRequestObject struct {
+type UpdateDeviceFeatureRequestObject struct {
 	Deviceid int32 `json:"deviceid"`
-	Body     *UpsertDeviceFeatureJSONRequestBody
+	Body     *UpdateDeviceFeatureJSONRequestBody
 }
 
-type UpsertDeviceFeatureResponseObject interface {
-	VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error
+type UpdateDeviceFeatureResponseObject interface {
+	VisitUpdateDeviceFeatureResponse(w http.ResponseWriter) error
 }
 
-type UpsertDeviceFeature200JSONResponse DeviceFeature
+type UpdateDeviceFeature200JSONResponse DeviceFeature
 
-func (response UpsertDeviceFeature200JSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
+func (response UpdateDeviceFeature200JSONResponse) VisitUpdateDeviceFeatureResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpsertDeviceFeaturedefaultJSONResponse struct {
+type UpdateDeviceFeaturedefaultJSONResponse struct {
 	Body       ErrorResponse
 	StatusCode int
 }
 
-func (response UpsertDeviceFeaturedefaultJSONResponse) VisitUpsertDeviceFeatureResponse(w http.ResponseWriter) error {
+func (response UpdateDeviceFeaturedefaultJSONResponse) VisitUpdateDeviceFeatureResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(response.StatusCode)
 
@@ -463,9 +463,9 @@ type StrictServerInterface interface {
 	// Create a new device
 	// (POST /api/v1/device)
 	CreateDevice(ctx context.Context, request CreateDeviceRequestObject) (CreateDeviceResponseObject, error)
-	// Upsert device feature
+	// Update device feature
 	// (PUT /api/v1/device/{deviceid}/feature)
-	UpsertDeviceFeature(ctx context.Context, request UpsertDeviceFeatureRequestObject) (UpsertDeviceFeatureResponseObject, error)
+	UpdateDeviceFeature(ctx context.Context, request UpdateDeviceFeatureRequestObject) (UpdateDeviceFeatureResponseObject, error)
 	// List user devices
 	// (GET /api/v1/devices)
 	ListDevices(ctx context.Context, request ListDevicesRequestObject) (ListDevicesResponseObject, error)
@@ -537,13 +537,13 @@ func (sh *strictHandler) CreateDevice(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// UpsertDeviceFeature operation middleware
-func (sh *strictHandler) UpsertDeviceFeature(w http.ResponseWriter, r *http.Request, deviceid int32) {
-	var request UpsertDeviceFeatureRequestObject
+// UpdateDeviceFeature operation middleware
+func (sh *strictHandler) UpdateDeviceFeature(w http.ResponseWriter, r *http.Request, deviceid int32) {
+	var request UpdateDeviceFeatureRequestObject
 
 	request.Deviceid = deviceid
 
-	var body UpsertDeviceFeatureJSONRequestBody
+	var body UpdateDeviceFeatureJSONRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
 		return
@@ -551,18 +551,18 @@ func (sh *strictHandler) UpsertDeviceFeature(w http.ResponseWriter, r *http.Requ
 	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.UpsertDeviceFeature(ctx, request.(UpsertDeviceFeatureRequestObject))
+		return sh.ssi.UpdateDeviceFeature(ctx, request.(UpdateDeviceFeatureRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpsertDeviceFeature")
+		handler = middleware(handler, "UpdateDeviceFeature")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(UpsertDeviceFeatureResponseObject); ok {
-		if err := validResponse.VisitUpsertDeviceFeatureResponse(w); err != nil {
+	} else if validResponse, ok := response.(UpdateDeviceFeatureResponseObject); ok {
+		if err := validResponse.VisitUpdateDeviceFeatureResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {
@@ -647,32 +647,32 @@ func (sh *strictHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"/2cbI7ZQGwAA",
+	"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",
+	"uenKRRsAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
