@@ -8,6 +8,7 @@ const (
 )
 
 type Config struct {
-	Level  string    `json:"level"`
-	Format LogFormat `json:"format"`
+	Level      string    `json:"level"`
+	Format     LogFormat `json:"format"`
+	OutputFile string    `json:"outputFile"`
 }

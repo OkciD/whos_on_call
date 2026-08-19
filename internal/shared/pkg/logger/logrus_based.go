@@ -95,6 +95,15 @@ func NewLogrusBasedLogger(cfg *Config) Logger {
 	}
 	logrusLogger.SetLevel(logLevel)
 
+	if cfg.OutputFile != "" {
+		file, err := os.OpenFile(cfg.OutputFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err == nil {
+			logrusLogger.Out = file
+		} else {
+			logrusLogger.WithError(err).WithField("file", cfg.OutputFile).Warn("failed to log to file, using default stderr")
+		}
+	}
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "unk"
