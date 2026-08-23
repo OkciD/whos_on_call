@@ -60,7 +60,10 @@ db/create_migration:
 
 .PHONY: db/populate
 db/populate:
-	sqlite3 $(LOCAL_DB_PATH) < $(LOCAL_DB_DIR)/test_data.sql
+# sha256('lolkek')
+	sed -e 's/__NAME__/JohnDoe/g' -e 's/__KEY__/abb45ef89186194a3e3ee700894caeb3b86ced38db1fa3ec7fd0f5e2ff6d9ec1/g' $(LOCAL_DB_DIR)/test_data.sql | sqlite3 $(LOCAL_DB_PATH)
+# sha256('ololo')
+	sed -e 's/__NAME__/JaneDoe/g' -e 's/__KEY__/0cb2ac8bcf600372b573bf9f807de3eb0b3ceda51c0a2045d6902412c53451f2/g' $(LOCAL_DB_DIR)/test_data.sql | sqlite3 $(LOCAL_DB_PATH)
 
 .PHONY: gen/api
 gen/api: gen/api/models gen/api/server gen/api/client

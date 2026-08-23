@@ -11,6 +11,7 @@ require (
 	github.com/pressly/goose/v3 v3.26.0
 	github.com/simukti/sqldb-logger v0.0.0-20230108155151-646c1a075551
 	github.com/sirupsen/logrus v1.9.3
+	golang.org/x/sync v0.19.0
 )
 
 require (
@@ -34,7 +35,6 @@ require (
 	github.com/woodsbury/decimal128 v1.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/mod v0.30.0 // indirect
-	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect

@@ -3,15 +3,14 @@ BEGIN TRANSACTION;
 -- Вставляем пользователя
 INSERT INTO users (name, api_key_hash)
 VALUES (
-    'John Doe',
-    'abb45ef89186194a3e3ee700894caeb3b86ced38db1fa3ec7fd0f5e2ff6d9ec1' -- sha256("lolkek")
+    '__NAME__',
+    '__KEY__'
 );
 
 -- Получаем ID последнего вставленного пользователя
 WITH user_data AS (
     SELECT last_insert_rowid() AS user_id
 )
-
 -- Вставляем устройство, используя этот ID
 INSERT INTO devices (name, type, user_id)
 VALUES (
@@ -24,7 +23,6 @@ VALUES (
 WITH device_data AS (
     SELECT last_insert_rowid() AS device_id
 )
-
 -- Вставляем функции устройства
 INSERT INTO device_features (type, status, device_id)
 VALUES
@@ -37,6 +35,6 @@ VALUES
     1, -- camera
     0, -- inactive
     (SELECT device_id FROM device_data)
-); 
+);
 
 COMMIT;
