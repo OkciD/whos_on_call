@@ -1,0 +1,7 @@
+info:
+  name: Create Device
+  type: folder
+  seq: 1
+
+request:
+  auth: inherit

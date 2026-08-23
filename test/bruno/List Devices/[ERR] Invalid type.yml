@@ -1,0 +1,29 @@
+info:
+  name: "[ERR] Invalid type"
+  type: http
+  seq: 2
+  tags:
+    - Device
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/devices?type=lolkek&name=Workstation"
+  params:
+    - name: type
+      value: lolkek
+      type: query
+    - name: name
+      value: Workstation
+      type: query
+  body:
+    type: json
+    data: ""
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Creates a new device for the authenticated user
