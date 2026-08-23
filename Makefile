@@ -4,20 +4,22 @@ LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
 LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 
 .PHONY: build
-build: build/bin/server build/bin/client
+build: build/server build/client
 
-build/bin/server:
-	go build -o $(@) ./cmd/server
+.PHONY: build/server
+build/server:
+	go build -o $(BIN_DIR)/server ./cmd/server
 
-build/bin/client:
-	go build -o $(@) ./cmd/client
+.PHONY: build/client
+build/client:
+	go build -o $(BIN_DIR)/client ./cmd/client
 
 .PHONY: clean
 clean:
-	rm -f $(BIN_DIR)/*
+	rm -f $(BIN_DIR)/server $(BIN_DIR)/client
 
 .PHONY: run/server
-run/server: clean build
+run/server: build
 	$(BIN_DIR)/server -config=$(ROOT_DIR)/configs/server_local.json
 
 .PHONY: debug/server
@@ -41,7 +43,11 @@ tidy:
 
 .PHONY: fmt
 fmt:
-	go fmt ./...
+	golangci-lint-v2 fmt
+
+.PHONY: lint
+lint:
+	golangci-lint-v2 run $(if $(fix),--fix)
 
 .PHONY: db/create
 db/create:
@@ -59,11 +65,14 @@ db/populate:
 .PHONY: gen/api
 gen/api: gen/api/models gen/api/server gen/api/client
 
+.PHONY: gen/api/models
 gen/api/models:
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/models.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml
 
+.PHONY: gen/api/server
 gen/api/server:
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/server.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml
 
+.PHONY: gen/api/client
 gen/api/client:
 	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen -config $(ROOT_DIR)/api/client.oapi-codegen.yaml $(ROOT_DIR)/api/openapi.yaml
