@@ -8,8 +8,12 @@ import (
 	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
-func (r *Repository) ListByUserID(ctx context.Context, userID int, params *appModels.DeviceListParams) ([]appModels.Device, error) {
-	dbDevices := make([]dbModels.Device, 0, 4)
+func (r *Repository) ListByUserID(
+	ctx context.Context,
+	userID int,
+	params *appModels.DeviceListParams,
+) ([]appModels.Device, error) {
+	dbDevices := []dbModels.Device{}
 
 	query := "SELECT id, name, type FROM devices WHERE user_id = ?"
 	args := []any{userID}
@@ -21,11 +25,11 @@ func (r *Repository) ListByUserID(ctx context.Context, userID int, params *appMo
 		}
 
 		if dbParams.Name.Valid {
-			query = query + " AND name = ?"
+			query += " AND name = ?"
 			args = append(args, dbParams.Name.String)
 		}
 		if dbParams.Type.Valid {
-			query = query + " AND type = ?"
+			query += " AND type = ?"
 			args = append(args, dbParams.Type.Int16)
 		}
 	}

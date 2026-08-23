@@ -17,13 +17,13 @@ var humanReadableCallState = map[CallState]string{
 func (t CallState) String() string {
 	if str, ok := humanReadableCallState[t]; ok {
 		return str
-	} else {
-		return strconv.FormatInt(int64(t), 10)
 	}
+	return strconv.FormatInt(int64(t), 10)
 }
 
 type DeviceStatus struct {
 	Device
+
 	Features []DeviceFeature
 }
 

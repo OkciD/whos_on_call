@@ -8,7 +8,7 @@ import (
 )
 
 type config struct {
-	ApiServer server.Config `json:"apiServer"`
+	APIServer server.Config `json:"apiServer"`
 	WebServer server.Config `json:"webServer"`
 
 	Logger logger.Config `json:"logger"`

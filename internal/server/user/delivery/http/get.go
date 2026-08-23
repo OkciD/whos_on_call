@@ -10,7 +10,8 @@ import (
 )
 
 // GET /api/v1/user
-func (h UserHandler) GetUser(ctx context.Context, request gen.GetUserRequestObject) (gen.GetUserResponseObject, error) {
+
+func (h UserHandler) GetUser(ctx context.Context, _ gen.GetUserRequestObject) (gen.GetUserResponseObject, error) {
 	user, err := appContext.GetUser(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)

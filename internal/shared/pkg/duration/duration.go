@@ -11,13 +11,17 @@ type MarshallableDuration struct {
 }
 
 func (d MarshallableDuration) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.String())
+	marshalled, err := json.Marshal(d.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal duration: %w", err)
+	}
+	return marshalled, nil
 }
 
 func (d *MarshallableDuration) UnmarshalJSON(b []byte) error {
 	var v any
 	if err := json.Unmarshal(b, &v); err != nil {
-		return err
+		return fmt.Errorf("failed to unmarshal duration: %w", err)
 	}
 	switch value := v.(type) {
 	case float64:
@@ -27,7 +31,7 @@ func (d *MarshallableDuration) UnmarshalJSON(b []byte) error {
 		var err error
 		d.Duration, err = time.ParseDuration(value)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to parse unmarshalled duration string: %w", err)
 		}
 		return nil
 	default:

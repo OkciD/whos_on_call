@@ -22,7 +22,7 @@ func (u *UseCase) Update(
 		"newDeviceFeatureStatus": newDeviceFeature.Status,
 	}).Info("upsert device feature")
 
-	device, err := u.deviceRepo.GetById(ctx, deviceID, user.ID)
+	device, err := u.deviceRepo.GetByID(ctx, deviceID, user.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get device from repo: %w", err)
 	}
@@ -34,7 +34,7 @@ func (u *UseCase) Update(
 		"deviceType": device.Type,
 	}).Info("device found")
 
-	existingDeviceFeature, err := u.deviceFeatureRepo.GetByDeviceId(ctx, device.ID, newDeviceFeature.Type)
+	existingDeviceFeature, err := u.deviceFeatureRepo.GetByDeviceID(ctx, device.ID, newDeviceFeature.Type)
 	if err != nil {
 		return nil, fmt.Errorf("error checking existing device feature in db: %w", err)
 	}

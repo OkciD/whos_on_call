@@ -9,7 +9,7 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-type server struct {
+type Server struct {
 	name   string
 	config Config
 	logger logger.Logger
@@ -17,20 +17,21 @@ type server struct {
 	server http.Server
 }
 
-func New(name string, config Config, logger logger.Logger, mux http.Handler) *server {
-	return &server{
+func New(name string, config Config, logger logger.Logger, mux http.Handler) *Server {
+	return &Server{
 		name:   name,
 		config: config,
 		logger: logger.WithField("serverName", name),
 
 		server: http.Server{
-			Addr:    config.ListenAddr,
-			Handler: mux,
+			Addr:        config.ListenAddr,
+			Handler:     mux,
+			ReadTimeout: config.ReadTimeout.Duration,
 		},
 	}
 }
 
-func (s *server) Start() error {
+func (s *Server) Start() error {
 	s.logger.WithField("addr", s.server.Addr).Info("server starting")
 
 	if err := s.server.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
@@ -44,7 +45,7 @@ func (s *server) Start() error {
 	return nil
 }
 
-func (s *server) Stop() error {
+func (s *Server) Stop() error {
 	shutdownCtx, shutdownRelease := context.WithTimeout(context.Background(), s.config.ShutdownTimeout.Duration)
 	defer shutdownRelease()
 

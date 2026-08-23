@@ -6,10 +6,11 @@ import (
 
 	"fmt"
 
+	sqlite "github.com/mattn/go-sqlite3"
+
 	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
 	"github.com/OkciD/whos_on_call/internal/shared/models/db"
-	sqlite "github.com/mattn/go-sqlite3"
 )
 
 func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*models.Device, error) {
@@ -18,9 +19,10 @@ func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*mod
 		return nil, fmt.Errorf("failed to convert device model for creation: %w", err)
 	}
 
-	result, err := r.GetExecutor(ctx).ExecContext(ctx, "INSERT INTO devices (name, type, user_id) VALUES (?, ?, ?)", dbNewDevice.Name, dbNewDevice.Type, dbNewDevice.UserID)
+	result, err := r.GetExecutor(ctx).
+		ExecContext(ctx, "INSERT INTO devices (name, type, user_id) VALUES (?, ?, ?)", dbNewDevice.Name, dbNewDevice.Type, dbNewDevice.UserID)
 	if err != nil {
-		if sqliteError, ok := err.(sqlite.Error); ok {
+		if sqliteError, ok := errors.AsType[sqlite.Error](err); ok {
 			if sqliteError.Code == sqlite.ErrConstraint && sqliteError.ExtendedCode == sqlite.ErrConstraintUnique {
 				return nil, fmt.Errorf("%w, %w", appErrors.ErrDuplicate, errors.New(sqliteError.Error()))
 			}

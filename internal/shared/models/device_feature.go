@@ -12,6 +12,8 @@ const (
 	DeviceFeatureTypeCamera
 )
 
+const DeviceFeaturesCount = 2
+
 var humanReadableDeviceFeatureType = map[DeviceFeatureType]string{
 	DeviceFeatureTypeMic:    "mic",
 	DeviceFeatureTypeCamera: "camera",
@@ -20,9 +22,8 @@ var humanReadableDeviceFeatureType = map[DeviceFeatureType]string{
 func (t DeviceFeatureType) String() string {
 	if str, ok := humanReadableDeviceFeatureType[t]; ok {
 		return str
-	} else {
-		return strconv.FormatInt(int64(t), 10)
 	}
+	return strconv.FormatInt(int64(t), 10)
 }
 
 var DeviceFeatureTypes = [2]DeviceFeatureType{DeviceFeatureTypeMic, DeviceFeatureTypeCamera}
@@ -42,9 +43,8 @@ var humanReadableDeviceFeatureStatus = map[DeviceFeatureStatus]string{
 func (t DeviceFeatureStatus) String() string {
 	if str, ok := humanReadableDeviceFeatureStatus[t]; ok {
 		return str
-	} else {
-		return strconv.FormatInt(int64(t), 10)
 	}
+	return strconv.FormatInt(int64(t), 10)
 }
 
 type DeviceFeature struct {

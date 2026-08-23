@@ -8,4 +8,4 @@ import (
 //go:embed *.html
 var templatesFS embed.FS
 
-var CallStatus *template.Template = template.Must(template.ParseFS(templatesFS, "base.html", "call_status.html"))
+var CallStatus = template.Must(template.ParseFS(templatesFS, "base.html", "call_status.html"))

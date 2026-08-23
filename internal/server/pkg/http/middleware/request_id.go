@@ -3,28 +3,29 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/google/uuid"
+
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
-	"github.com/google/uuid"
 )
 
-const REQUEST_ID_HEADER string = "X-Request-Id"
+const ReqIDHeader string = "X-Request-Id"
 
-func NewRequestIdMiddleware() func(http.Handler) http.Handler {
+func NewRequestIDMiddleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			reqId := uuid.New().String()
+			reqID := uuid.New().String()
 
-			contextWithReqId := appContext.StoreRequestId(r.Context(), reqId)
-			contextWithLoggerReqId := logger.AddFieldsToContext(contextWithReqId, logger.Fields{
-				"reqid": reqId,
+			contextWithReqID := appContext.StoreRequestID(r.Context(), reqID)
+			contextWithLoggerReqID := logger.AddFieldsToContext(contextWithReqID, logger.Fields{
+				"reqid": reqID,
 			})
 
-			requestWithReqId := r.WithContext(contextWithLoggerReqId)
+			requestWithReqID := r.WithContext(contextWithLoggerReqID)
 
-			w.Header().Add(REQUEST_ID_HEADER, reqId)
+			w.Header().Add(ReqIDHeader, reqID)
 
-			next.ServeHTTP(w, requestWithReqId)
+			next.ServeHTTP(w, requestWithReqID)
 		})
 	}
 }

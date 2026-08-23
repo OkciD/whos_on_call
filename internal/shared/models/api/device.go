@@ -27,6 +27,7 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 
 func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 	apiDevice := &Device{
+		//nolint:gosec // todo:fix potential overflow
 		Id:   int32(appDevice.ID),
 		Name: appDevice.Name,
 	}
@@ -66,6 +67,7 @@ func (p *ListDevicesParams) ToAppModel() (*appModels.DeviceListParams, error) {
 	}
 
 	if appParams.Name == nil && appParams.Type == nil {
+		//nolint:nilnil // first nil means no params
 		return nil, nil
 	}
 
@@ -93,6 +95,7 @@ func FromDeviceListParamsAppModel(appParams *appModels.DeviceListParams) (*ListD
 	}
 
 	if apiParams.Name == nil && apiParams.Type == nil {
+		//nolint:nilnil // first nil means no params
 		return nil, nil
 	}
 

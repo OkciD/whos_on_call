@@ -1,4 +1,4 @@
-package sqldblogger_adapter
+package sqldbloggeradapter
 
 import (
 	"context"

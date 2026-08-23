@@ -10,10 +10,11 @@ import (
 	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
-func (r *Repository) GetById(ctx context.Context, deviceID int, userID int) (*appModels.Device, error) {
+func (r *Repository) GetByID(ctx context.Context, deviceID int, userID int) (*appModels.Device, error) {
 	result := dbModels.Device{}
 
-	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, name, type FROM devices WHERE id = ? AND user_id = ?", deviceID, userID)
+	row := r.GetExecutor(ctx).
+		QueryRowContext(ctx, "SELECT id, name, type FROM devices WHERE id = ? AND user_id = ?", deviceID, userID)
 
 	if err := row.Scan(&result.ID, &result.Name, &result.Type); err != nil {
 		r.logger.WithError(err).Error("error selecting device by id and user")

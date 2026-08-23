@@ -9,9 +9,10 @@ import (
 )
 
 func (r *Repository) ListByDeviceID(ctx context.Context, deviceID int) ([]appModels.DeviceFeature, error) {
-	dbFeatures := make([]dbModels.DeviceFeature, 0, 2)
+	dbFeatures := make([]dbModels.DeviceFeature, 0, appModels.DeviceFeaturesCount)
 
-	rows, err := r.GetExecutor(ctx).QueryContext(ctx, "SELECT id, type, status, last_active FROM device_features WHERE device_id = ? ORDER BY type ASC", deviceID)
+	rows, err := r.GetExecutor(ctx).
+		QueryContext(ctx, "SELECT id, type, status, last_active FROM device_features WHERE device_id = ? ORDER BY type ASC", deviceID)
 	if err != nil {
 		return nil, fmt.Errorf("select device features by device query failed: %w", err)
 	}

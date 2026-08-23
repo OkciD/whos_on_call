@@ -40,6 +40,7 @@ func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
 
 	c.logRequest(req)
 
+	//nolint:gosec // todo:fix potential ssrf???
 	resp, err := c.Client.Do(req)
 
 	if err != nil {

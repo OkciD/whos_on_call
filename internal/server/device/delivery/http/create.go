@@ -10,7 +10,11 @@ import (
 )
 
 // POST /api/v1/device
-func (h DeviceHandler) CreateDevice(ctx context.Context, request gen.CreateDeviceRequestObject) (gen.CreateDeviceResponseObject, error) {
+
+func (h DeviceHandler) CreateDevice(
+	ctx context.Context,
+	request gen.CreateDeviceRequestObject,
+) (gen.CreateDeviceResponseObject, error) {
 	newDeviceInput := api.Device{
 		Name: request.Body.Name,
 		Type: request.Body.Type,

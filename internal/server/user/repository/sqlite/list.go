@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Repository) List(ctx context.Context) ([]appModels.User, error) {
-	dbUsers := make([]dbModels.User, 0, 4)
+	dbUsers := []dbModels.User{}
 
 	rows, err := r.GetExecutor(ctx).QueryContext(ctx, "SELECT id, name FROM users")
 	if err != nil {

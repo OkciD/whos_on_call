@@ -10,14 +10,15 @@ import (
 	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
-func (r *Repository) GetByDeviceId(
+func (r *Repository) GetByDeviceID(
 	ctx context.Context,
 	deviceID int,
 	deviceFeatureType appModels.DeviceFeatureType,
 ) (*appModels.DeviceFeature, error) {
 	result := dbModels.DeviceFeature{}
 
-	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, type, status, last_active, device_id FROM device_features WHERE device_id = ? AND type = ?", deviceID, deviceFeatureType)
+	row := r.GetExecutor(ctx).
+		QueryRowContext(ctx, "SELECT id, type, status, last_active, device_id FROM device_features WHERE device_id = ? AND type = ?", deviceID, deviceFeatureType)
 
 	if err := row.Scan(&result.ID, &result.Type, &result.Status, &result.LastActive, &result.DeviceID); err != nil {
 		r.logger.WithError(err).Error("error selecting device feature by device id")

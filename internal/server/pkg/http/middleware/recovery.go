@@ -21,7 +21,10 @@ func NewRecoveryMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Hand
 					// todo: не писать ответ "руками"
 					w.Header().Add("Content-Type", "application/json")
 					w.WriteHeader(http.StatusInternalServerError)
-					w.Write([]byte("{\"code\":\"internal\"}"))
+					_, err := w.Write([]byte("{\"code\":\"internal\"}"))
+					if err != nil {
+						logger.WithError(err).Error("error while writing 500 fallback error")
+					}
 				}
 			}()
 

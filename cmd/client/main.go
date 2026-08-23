@@ -34,7 +34,7 @@ func main() {
 
 	apiClient, err := apiclient.New(
 		logger.ForModule("api_client"),
-		cfg.ApiClient,
+		cfg.APIClient,
 	)
 	if err != nil {
 		log.Fatal(err)

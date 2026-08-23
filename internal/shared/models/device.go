@@ -19,9 +19,8 @@ var humanReadableDeviceType = map[DeviceType]string{
 func (t DeviceType) String() string {
 	if str, ok := humanReadableDeviceType[t]; ok {
 		return str
-	} else {
-		return strconv.FormatInt(int64(t), 10)
 	}
+	return strconv.FormatInt(int64(t), 10)
 }
 
 type Device struct {

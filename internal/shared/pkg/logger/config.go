@@ -3,7 +3,7 @@ package logger
 type LogFormat string
 
 const (
-	LogFormatJson LogFormat = "json"
+	LogFormatJSON LogFormat = "json"
 	LogFormatText LogFormat = "text"
 )
 

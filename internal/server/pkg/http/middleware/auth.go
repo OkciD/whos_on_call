@@ -8,21 +8,25 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-const API_KEY_HEADER = "X-Api-Key"
+//nolint:gosec // фолзит
+const APIKeyHeader = "X-Api-Key"
 
 func NewAuthMiddleware(logger logger.Logger, userUseCase user.UseCase) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			apiKey := r.Header.Get(API_KEY_HEADER)
+			apiKey := r.Header.Get(APIKeyHeader)
 
-			user, err := userUseCase.GetUserByApiKey(r.Context(), apiKey)
+			user, err := userUseCase.GetUserByAPIKey(r.Context(), apiKey)
 			if err != nil {
 				logger.WithError(err).Error("failed to get user by api key")
 
 				// todo: не писать ответ "руками"
 				w.Header().Add("Content-Type", "application/json")
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("{\"code\":\"unauthorized\"}"))
+				_, err := w.Write([]byte("{\"code\":\"unauthorized\"}"))
+				if err != nil {
+					logger.WithError(err).Error("error while writing 401 error from auth middleware")
+				}
 				return
 			}
 

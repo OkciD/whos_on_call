@@ -10,7 +10,11 @@ import (
 )
 
 // GET /api/v1/devices?type=...&name=...
-func (h DeviceHandler) ListDevices(ctx context.Context, request gen.ListDevicesRequestObject) (gen.ListDevicesResponseObject, error) {
+
+func (h DeviceHandler) ListDevices(
+	ctx context.Context,
+	request gen.ListDevicesRequestObject,
+) (gen.ListDevicesResponseObject, error) {
 	user, err := appContext.GetUser(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user from request: %w", err)

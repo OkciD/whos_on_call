@@ -7,7 +7,7 @@ import (
 	userDelivery "github.com/OkciD/whos_on_call/internal/server/user/delivery/http"
 )
 
-type ApiServer struct {
+type APIServer struct {
 	userDelivery.UserHandler
 	deviceDelivery.DeviceHandler
 	deviceFeatureDelivery.DeviceFeatureHandler

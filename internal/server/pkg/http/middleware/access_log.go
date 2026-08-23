@@ -11,7 +11,7 @@ func NewAccessLogMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Han
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logger.WithRequest(r).WithField(
-				"reqId", context.GetRequestId(r.Context()),
+				"reqId", context.GetRequestID(r.Context()),
 			).Info("access log")
 
 			next.ServeHTTP(w, r)

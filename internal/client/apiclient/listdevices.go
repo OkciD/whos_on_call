@@ -3,6 +3,7 @@ package apiclient
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/shared/errors/mapper"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
@@ -22,7 +23,7 @@ func (c *apiClient) ListDevices(ctx context.Context, params *models.DeviceListPa
 
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		appDevices := make([]models.Device, 0, len(*resp.JSON200))
 
 		for _, apiDevice := range *resp.JSON200 {
@@ -34,7 +35,6 @@ func (c *apiClient) ListDevices(ctx context.Context, params *models.DeviceListPa
 		}
 
 		return appDevices, nil
-	} else {
-		return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 	}
+	return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 }

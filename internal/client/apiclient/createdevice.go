@@ -3,6 +3,7 @@ package apiclient
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/shared/errors/mapper"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
@@ -26,13 +27,12 @@ func (c *apiClient) CreateDevice(ctx context.Context, newDevice *models.Device) 
 
 	statusCode := resp.StatusCode()
 
-	if statusCode == 201 {
+	if statusCode == http.StatusCreated {
 		appDevice, err := resp.JSON201.ToAppModel()
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert device from api to model: %w", err)
 		}
 		return appDevice, nil
-	} else {
-		return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 	}
+	return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 }

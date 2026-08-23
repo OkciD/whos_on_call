@@ -12,6 +12,7 @@ import (
 
 type ErrorResp struct {
 	api.ErrorResponse
+
 	StatusCode int
 }
 
@@ -43,6 +44,8 @@ func ErrorToResp(err error) ErrorResp {
 }
 
 var respToErrMap = utils.ReverseMap(errToRespMap)
+
+//nolint:errname // правило фолзит
 var defaultErr = appErrors.ErrUnknown
 
 func RespToError(statusCode int, errResp api.ErrorResponse) error {

@@ -8,5 +8,5 @@ import (
 
 type Repository interface {
 	List(ctx context.Context) ([]models.User, error)
-	GetUserByApiKey(ctx context.Context, apiKey string) (*models.User, error)
+	GetUserByAPIKey(ctx context.Context, apiKey string) (*models.User, error)
 }

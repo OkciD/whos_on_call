@@ -3,6 +3,7 @@ package apiclient
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/shared/errors/mapper"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
@@ -16,9 +17,8 @@ func (c *apiClient) GetUser(ctx context.Context) (*models.User, error) {
 
 	statusCode := resp.StatusCode()
 
-	if statusCode == 200 {
+	if statusCode == http.StatusOK {
 		return resp.JSON200.ToAppModel(), nil
-	} else {
-		return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 	}
+	return nil, mapper.RespToError(statusCode, *resp.JSONDefault)
 }

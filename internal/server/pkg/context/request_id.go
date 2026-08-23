@@ -2,17 +2,17 @@ package context
 
 import "context"
 
-type requestIdCtxKey = struct{}
+type requestIDCtxKey = struct{}
 
-func StoreRequestId(ctx context.Context, reqId string) context.Context {
-	return context.WithValue(ctx, requestIdCtxKey{}, reqId)
+func StoreRequestID(ctx context.Context, reqID string) context.Context {
+	return context.WithValue(ctx, requestIDCtxKey{}, reqID)
 }
 
-func GetRequestId(ctx context.Context) string {
-	reqId, ok := ctx.Value(requestIdCtxKey{}).(string)
+func GetRequestID(ctx context.Context) string {
+	reqID, ok := ctx.Value(requestIDCtxKey{}).(string)
 	if !ok {
 		return "undef"
 	}
 
-	return reqId
+	return reqID
 }

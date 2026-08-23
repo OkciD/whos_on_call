@@ -9,7 +9,7 @@ import (
 type UseCase interface {
 	Update(
 		ctx context.Context,
-		deviceId int,
+		deviceID int,
 		user *models.User,
 		newDeviceFeature *models.DeviceFeature,
 	) (*models.DeviceFeature, error)

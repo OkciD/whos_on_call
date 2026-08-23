@@ -12,14 +12,14 @@ import (
 	dbModels "github.com/OkciD/whos_on_call/internal/shared/models/db"
 )
 
-func (r *Repository) GetUserByApiKey(ctx context.Context, apiKey string) (*appModels.User, error) {
+func (r *Repository) GetUserByAPIKey(ctx context.Context, apiKey string) (*appModels.User, error) {
 	hasher := sha256.New()
 	hasher.Write([]byte(apiKey))
-	hashedApiKey := hex.EncodeToString(hasher.Sum(nil))
+	hashedAPIKey := hex.EncodeToString(hasher.Sum(nil))
 
 	user := dbModels.User{}
 
-	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, name FROM users WHERE api_key_hash = ?", hashedApiKey)
+	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, name FROM users WHERE api_key_hash = ?", hashedAPIKey)
 
 	if err := row.Scan(&user.ID, &user.Name); err != nil {
 		r.logger.WithError(err).Error("error selecting user")

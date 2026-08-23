@@ -9,7 +9,7 @@ import (
 
 type config struct {
 	Logger    logger.Config    `json:"logger"`
-	ApiClient apiclient.Config `json:"apiClient"`
+	APIClient apiclient.Config `json:"apiClient"`
 	Device    *ConfigDevice    `json:"device"`
 }
 

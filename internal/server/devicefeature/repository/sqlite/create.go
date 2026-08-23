@@ -29,8 +29,8 @@ func (r *Repository) Create(
 		return nil, fmt.Errorf("failed to insert device_feature: %w", err)
 	}
 
-	if lastInsertId, err := result.LastInsertId(); err == nil {
-		newDeviceFeature.ID = int(lastInsertId)
+	if lastInsertID, err := result.LastInsertId(); err == nil {
+		newDeviceFeature.ID = int(lastInsertID)
 	} else {
 		return nil, fmt.Errorf("error getting last inserted device feature id: %w", err)
 	}

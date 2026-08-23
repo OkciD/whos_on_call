@@ -7,5 +7,5 @@ import (
 )
 
 type UseCase interface {
-	GetUserByApiKey(ctx context.Context, apiKey string) (*models.User, error)
+	GetUserByAPIKey(ctx context.Context, apiKey string) (*models.User, error)
 }

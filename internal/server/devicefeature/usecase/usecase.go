@@ -13,7 +13,11 @@ type UseCase struct {
 	deviceFeatureRepo devicefeature.Repository
 }
 
-func New(logger logger.Logger, deviceRepo device.Repository, deviceFeatureRepo devicefeature.Repository) devicefeature.UseCase {
+func New(
+	logger logger.Logger,
+	deviceRepo device.Repository,
+	deviceFeatureRepo devicefeature.Repository,
+) devicefeature.UseCase {
 	return &UseCase{
 		logger: logger,
 

@@ -10,7 +10,7 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
-type ApiClient interface {
+type APIClient interface {
 	GetUser(ctx context.Context) (*models.User, error)
 	CreateDevice(ctx context.Context, newDevice *models.Device) (*models.Device, error)
 	ListDevices(ctx context.Context, params *models.DeviceListParams) ([]models.Device, error)
@@ -18,26 +18,28 @@ type ApiClient interface {
 }
 
 type apiClient struct {
+	logger    logger.Logger
 	genClient *gen.ClientWithResponses
 }
 
-func NewWithHttpClient(logger logger.Logger, hc httpclient.HttpDoer, cfg Config) (ApiClient, error) {
+func NewWithHTTPClient(logger logger.Logger, hc httpclient.HTTPDoer, cfg Config) (APIClient, error) {
 	genClient, err := gen.NewClientWithResponses(
 		cfg.BaseURL,
 		gen.WithHTTPClient(hc),
-		gen.WithRequestEditorFn(newAuthRequestEditor(cfg.ApiKey)),
+		gen.WithRequestEditorFn(newAuthRequestEditor(cfg.APIKey)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error initing generated api client: %w", err)
 	}
 
 	return &apiClient{
+		logger:    logger,
 		genClient: genClient,
 	}, nil
 }
 
-func New(logger logger.Logger, cfg Config) (ApiClient, error) {
+func New(logger logger.Logger, cfg Config) (APIClient, error) {
 	hc := httpclient.New(logger, cfg.HTTPClientConfig)
 
-	return NewWithHttpClient(logger, hc, cfg)
+	return NewWithHTTPClient(logger, hc, cfg)
 }

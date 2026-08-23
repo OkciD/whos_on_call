@@ -3,6 +3,7 @@ package apiserver
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -24,14 +25,14 @@ func respondError(w http.ResponseWriter, errorResp mapper.ErrorResp) {
 	err := json.NewEncoder(w).Encode(errorResp.ErrorResponse)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("{\"code\":\"internal\"}"))
+		_, _ = w.Write([]byte("{\"code\":\"internal\"}"))
 		return
 	}
-
 }
 
 // https://pkg.go.dev/github.com/oapi-codegen/nethttp-middleware#example-OapiRequestValidatorWithOptions-WithErrorHandlerWithOpts
-// todo: refactor
+
+//nolint:gocognit // todo: refactor
 func NewOapiValidatorErrorHandler(logger loggerPkg.Logger) nethttpmiddleware.ErrorHandlerWithOpts {
 	return func(ctx context.Context, err error, w http.ResponseWriter, r *http.Request, opts nethttpmiddleware.ErrorHandlerOpts) {
 		logger := logger.WithContext(ctx).WithError(err)
@@ -43,62 +44,85 @@ func NewOapiValidatorErrorHandler(logger loggerPkg.Logger) nethttpmiddleware.Err
 			return
 		}
 
-		switch e := err.(type) {
-		case *openapi3filter.SecurityRequirementsError:
+		if _, ok := errors.AsType[*openapi3filter.SecurityRequirementsError](err); ok {
 			logger.Error("security requirements error")
 
 			respondError(w, mapper.ErrorToResp(appErrors.ErrUnauthorized))
 			return
-		case *openapi3filter.RequestError:
+		}
+
+		//nolint:nestif // todo: refactor
+		if reqErr, ok := errors.AsType[*openapi3filter.RequestError](err); ok {
 			logger.Error("request error")
 
-			if e.RequestBody != nil && e.RequestBody.Required && r.ContentLength == 0 {
+			if reqErr.RequestBody != nil && reqErr.RequestBody.Required && r.ContentLength == 0 {
 				resp := mapper.ErrorToResp(appErrors.ErrInvalid)
 				resp.Body = &api.ErrorResponse_Body{}
-				resp.Body.FromErrorResponseWholeRequestError(api.ErrorResponseWholeRequestErrorRequired)
+				if err := resp.Body.FromErrorResponseWholeRequestError(
+					api.ErrorResponseWholeRequestErrorRequired,
+				); err != nil {
+					logger.WithError(err).Error("failed to write request error response")
+					respondError(w, mapper.ErrorToResp(appErrors.ErrUnknown))
+					return
+				}
 				respondError(w, resp)
 				return
 			}
 
-			if childErr := e.Unwrap(); childErr != nil {
-				switch ce := childErr.(type) {
-				case *openapi3.SchemaError:
+			//nolint:nestif // todo: refactor
+			if childErr := reqErr.Unwrap(); childErr != nil {
+				if schemaErr, ok := errors.AsType[*openapi3.SchemaError](err); ok {
 					resp := mapper.ErrorToResp(appErrors.ErrInvalid)
-					path := strings.Join(ce.JSONPointer(), ".")
+					path := strings.Join(schemaErr.JSONPointer(), ".")
 
 					resp.Body = &api.ErrorResponse_Body{}
 					if path != "" {
 						fieldError := "invalid"
-						if ce.SchemaField == "required" {
+						if schemaErr.SchemaField == "required" {
 							fieldError = "required"
 						}
-						resp.Body.FromErrorResponseRequestFieldError(map[string]string{
-							path: fieldError,
-						})
+						if err := resp.Body.FromErrorResponseRequestFieldError(
+							map[string]string{path: fieldError},
+						); err != nil {
+							logger.WithError(err).Error("failed to write schema error response")
+							respondError(w, mapper.ErrorToResp(appErrors.ErrUnknown))
+							return
+						}
 					} else {
-						resp.Body.FromErrorResponseWholeRequestError(api.ErrorResponseWholeRequestErrorInvalid)
+						if err := resp.Body.FromErrorResponseWholeRequestError(
+							api.ErrorResponseWholeRequestErrorInvalid,
+						); err != nil {
+							logger.WithError(err).Error("failed to write schema error response")
+							respondError(w, mapper.ErrorToResp(appErrors.ErrUnknown))
+							return
+						}
 					}
 
 					respondError(w, resp)
 					return
-				case *openapi3filter.ParseError:
-					p := e.Parameter
+				}
+				if _, ok := errors.AsType[*openapi3filter.ParseError](err); ok {
+					p := reqErr.Parameter
 
 					resp := mapper.ErrorToResp(appErrors.ErrInvalid)
 					if p.In == "path" {
 						resp.UrlParams = &api.ErrorResponse_UrlParams{}
-						resp.UrlParams.FromErrorResponseRequestFieldError(api.ErrorResponseRequestFieldError{
+						if err := resp.UrlParams.FromErrorResponseRequestFieldError(api.ErrorResponseRequestFieldError{
 							p.Name: "invalid",
-						})
+						}); err != nil {
+							logger.WithError(err).Error("failed to write parser error response")
+							respondError(w, mapper.ErrorToResp(appErrors.ErrUnknown))
+							return
+						}
 					}
 					// todo: query
 
 					respondError(w, resp)
 					return
-				default:
-					respondError(w, mapper.ErrorToResp(ce))
-					return
 				}
+
+				respondError(w, mapper.ErrorToResp(childErr))
+				return
 			}
 		}
 

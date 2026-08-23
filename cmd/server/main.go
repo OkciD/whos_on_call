@@ -1,3 +1,4 @@
+//nolint:cyclop // todo:refactor
 package main
 
 import (
@@ -38,6 +39,9 @@ import (
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
+// todo: refactor
+//
+//nolint:funlen
 func main() {
 	configFilePathPtr := flag.String("config", "", "path to config file")
 
@@ -82,15 +86,25 @@ func main() {
 
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
 	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), txManager, deviceRepo, deviceFeatureRepo)
-	deviceFeatureUseCase := deviceFeatureUseCase.New(logger.ForModule("devicefeature_usecase"), deviceRepo, deviceFeatureRepo)
-	callStatusUseCase := callStatusUseCase.New(logger.ForModule("callstatus_usecase"), cfg.CallStatus.UseCase, userRepo, deviceRepo, deviceFeatureRepo)
+	deviceFeatureUseCase := deviceFeatureUseCase.New(
+		logger.ForModule("devicefeature_usecase"),
+		deviceRepo,
+		deviceFeatureRepo,
+	)
+	callStatusUseCase := callStatusUseCase.New(
+		logger.ForModule("callstatus_usecase"),
+		cfg.CallStatus.UseCase,
+		userRepo,
+		deviceRepo,
+		deviceFeatureRepo,
+	)
 
 	userDelivery := userHttpDelivery.New(logger.ForModule("user_handler"), userUseCase)
 	deviceDelivery := deviceHttpDelivery.New(logger.ForModule("device_handler"), deviceUseCase)
 	deviceFeatureDelivery := deviceFeatureDelivery.New(logger.ForModule("devicefeature_handler"), deviceFeatureUseCase)
 	callStatusDelivery := callStatusDelivery.New(logger.ForModule("callstatus_delivery"), callStatusUseCase)
 
-	apiSrv := gen.NewStrictHandlerWithOptions(apiserver.ApiServer{
+	apiSrv := gen.NewStrictHandlerWithOptions(apiserver.APIServer{
 		UserHandler:          userDelivery,
 		DeviceHandler:        deviceDelivery,
 		DeviceFeatureHandler: deviceFeatureDelivery,
@@ -108,22 +122,24 @@ func main() {
 	apiServeMux := http.NewServeMux()
 	apiMux := gen.HandlerFromMux(apiSrv, apiServeMux)
 
-	wrappedApiMux := middleware.ApplyMiddlewares(
+	wrappedAPIMux := middleware.ApplyMiddlewares(
 		apiMux,
 		nethttpmiddleware.OapiRequestValidatorWithOptions(spec, &nethttpmiddleware.Options{
 			// todo: может переделать auth middleware на вот это?
 			Options: openapi3filter.Options{
 				AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
 			},
-			ErrorHandlerWithOpts: apiserver.NewOapiValidatorErrorHandler(logger.ForModule("oapi_validator_error_handler")),
+			ErrorHandlerWithOpts: apiserver.NewOapiValidatorErrorHandler(
+				logger.ForModule("oapi_validator_error_handler"),
+			),
 		}),
 		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
-		middleware.NewRequestIdMiddleware(),
+		middleware.NewRequestIDMiddleware(),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 
-	apiServer := server.New("api", cfg.ApiServer, logger, wrappedApiMux)
+	apiServer := server.New("api", cfg.APIServer, logger, wrappedAPIMux)
 	go func() {
 		if err := apiServer.Start(); err != nil {
 			logger.WithError(err).Fatal("error starting api server")
@@ -137,7 +153,7 @@ func main() {
 	wrappedWebMux := middleware.ApplyMiddlewares(
 		webMux,
 		middleware.NewAccessLogMiddleware(logger),
-		middleware.NewRequestIdMiddleware(),
+		middleware.NewRequestIDMiddleware(),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 

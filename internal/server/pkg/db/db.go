@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
-	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger/sqldblogger_adapter"
 	sqldblogger "github.com/simukti/sqldb-logger"
+
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
+	sqlDBLoggerAdapter "github.com/OkciD/whos_on_call/internal/shared/pkg/logger/sqldbloggeradapter"
 )
 
 func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
@@ -18,7 +19,7 @@ func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
 
 	logger.Info("open db successfully")
 
-	loggerAdapter := sqldblogger_adapter.New(logger)
+	loggerAdapter := sqlDBLoggerAdapter.New(logger)
 	db = sqldblogger.OpenDriver(
 		cfg.DSN,
 		db.Driver(),

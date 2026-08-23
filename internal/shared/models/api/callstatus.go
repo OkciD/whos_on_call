@@ -32,9 +32,9 @@ func FromAppCallStatus(appCallStatus appModels.CallStatus) (CallStatus, error) {
 			}
 
 			apiDeviceStatus := DeviceStatus{
-				Id:       int32(apiDevice.Id),
+				Id:       apiDevice.Id,
 				Name:     apiDevice.Name,
-				Type:     DeviceType(apiDevice.Type),
+				Type:     apiDevice.Type,
 				Features: make([]DeviceFeature, 0, len(appDeviceStatus.Features)),
 			}
 
