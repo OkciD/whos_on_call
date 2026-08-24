@@ -148,7 +148,7 @@ paths:
               status: "active"
       responses:
         "200":
-          description: "Device feature upserted successfully"
+          description: "Device feature updated successfully"
           content:
             application/json:
               schema:

@@ -52,11 +52,11 @@ lint:
 .PHONY: db/create
 db/create:
 	rm -f $(LOCAL_DB_PATH)
-	sqlite3 $(LOCAL_DB_PATH) "VACUUM;"
+	sqlite3 $(LOCAL_DB_PATH) "VACUUM; PRAGMA journal_mode=WAL; PRAGMA wal_autocheckpoint=1000; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=2000;"
 
 .PHONY: db/create_migration
 db/create_migration:
-	GOOSE_MIGRATION_DIR=$(ROOT_DIR)/internal/pkg/db/migrations goose sqlite3 $(LOCAL_DB_PATH) create $(name) sql
+	GOOSE_MIGRATION_DIR=$(ROOT_DIR)/internal/server/pkg/db/migrations goose sqlite3 $(LOCAL_DB_PATH) create $(name) sql
 
 .PHONY: db/populate
 db/populate:

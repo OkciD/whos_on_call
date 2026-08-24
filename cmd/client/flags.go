@@ -22,7 +22,7 @@ func readFlags() (*params, error) {
 	fs := flag.NewFlagSet("whos_on_call", flag.ContinueOnError)
 
 	configFilePathPtr := fs.String("config", "", "path to config file")
-	deviceFeatureTypePtr := fs.String("device", "", "device feature (mic/camera)")
+	deviceFeatureTypePtr := fs.String("device", "", "device feature (microphone/camera)")
 	eventPtr := fs.String("event", "", "device event (on/off)")
 
 	err := fs.Parse(os.Args[1:])

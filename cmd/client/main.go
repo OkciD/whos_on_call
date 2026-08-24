@@ -62,7 +62,7 @@ func main() {
 		logger.WithError(err).Fatal("failed to list devices")
 	}
 
-	if existingDevices != nil {
+	if len(existingDevices) > 0 {
 		if len(existingDevices) != 1 {
 			logger.WithError(err).WithFields(loggerPkg.Fields{
 				"type":       appDevice.Type,
@@ -106,7 +106,7 @@ func main() {
 		Device: appDevice,
 	})
 	if err != nil {
-		logger.WithError(err).Error("error updating device feature")
+		logger.WithError(err).Fatal("error updating device feature")
 	}
 
 	logger.WithFields(loggerPkg.Fields{

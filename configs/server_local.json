@@ -2,11 +2,18 @@
     "apiServer": {
         "listenAddr": ":8080",
         "shutdownTimeout": "10s",
-        "readTimeout": "2s"
+        "readHeaderTimeout": "1s",
+        "readTimeout": "10s",
+        "writeTimeout": "15s",
+        "idleTimeout": "60s"
     },
     "webServer": {
         "listenAddr": ":8081",
-        "shutdownTimeout": "10s"
+        "shutdownTimeout": "10s",
+        "readHeaderTimeout": "1s",
+        "readTimeout": "10s",
+        "writeTimeout": "15s",
+        "idleTimeout": "60s"
     },
     "logger": {
         "level": "trace",

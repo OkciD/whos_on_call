@@ -1,10 +1,12 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/server/user"
+	appErrors "github.com/OkciD/whos_on_call/internal/shared/errors"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
@@ -22,10 +24,19 @@ func NewAuthMiddleware(logger logger.Logger, userUseCase user.UseCase) func(http
 
 				// todo: не писать ответ "руками"
 				w.Header().Add("Content-Type", "application/json")
-				w.WriteHeader(http.StatusUnauthorized)
-				_, err := w.Write([]byte("{\"code\":\"unauthorized\"}"))
+
+				if errors.Is(err, appErrors.ErrEntityNotFound) {
+					w.WriteHeader(http.StatusUnauthorized)
+					_, err := w.Write([]byte("{\"code\":\"unauthorized\"}"))
+					if err != nil {
+						logger.WithError(err).Error("error while writing 401 error from auth middleware")
+					}
+				}
+
+				w.WriteHeader(http.StatusInternalServerError)
+				_, err := w.Write([]byte("{\"code\":\"internal\"}"))
 				if err != nil {
-					logger.WithError(err).Error("error while writing 401 error from auth middleware")
+					logger.WithError(err).Error("error while writing 500 error from auth middleware")
 				}
 				return
 			}

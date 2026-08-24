@@ -24,9 +24,12 @@ func New(name string, config Config, logger logger.Logger, mux http.Handler) *Se
 		logger: logger.WithField("serverName", name),
 
 		server: http.Server{
-			Addr:        config.ListenAddr,
-			Handler:     mux,
-			ReadTimeout: config.ReadTimeout.Duration,
+			Addr:              config.ListenAddr,
+			Handler:           mux,
+			ReadTimeout:       config.ReadTimeout.Duration,
+			ReadHeaderTimeout: config.ReadHeaderTimeout.Duration,
+			WriteTimeout:      config.WriteTimeout.Duration,
+			IdleTimeout:       config.IdleTimeout.Duration,
 		},
 	}
 }

@@ -24,6 +24,7 @@ func (h *WebHandler) CallStatus() http.Handler {
 		if err != nil {
 			h.logger.WithError(err).Error("error calculating call status")
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		templateData := callStatusTemplateData{
@@ -38,6 +39,7 @@ func (h *WebHandler) CallStatus() http.Handler {
 		if err := templates.CallStatus.Execute(w, templateData); err != nil {
 			h.logger.WithError(err).Error("error executing template for call status")
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 	})
 }

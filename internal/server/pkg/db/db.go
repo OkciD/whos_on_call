@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/mattn/go-sqlite3"
 	sqldblogger "github.com/simukti/sqldb-logger"
 
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
@@ -12,17 +13,10 @@ import (
 )
 
 func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
-	db, err := sql.Open(cfg.Driver, cfg.DSN)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to db by dsn %s: %w", cfg.DSN, err)
-	}
-
-	logger.Info("open db successfully")
-
 	loggerAdapter := sqlDBLoggerAdapter.New(logger)
-	db = sqldblogger.OpenDriver(
+	db := sqldblogger.OpenDriver(
 		cfg.DSN,
-		db.Driver(),
+		&sqlite3.SQLiteDriver{},
 		loggerAdapter,
 		sqldblogger.WithTimeFormat(sqldblogger.TimeFormatRFC3339),
 		sqldblogger.WithExecerLevel(sqldblogger.LevelDebug),
@@ -44,7 +38,7 @@ func NewDBConnection(logger logger.Logger, cfg *Config) (*sql.DB, error) {
 	if err := db.PingContext(pingCtx); err != nil {
 		return nil, fmt.Errorf("failed to ping db by dsn %s: %w", cfg.DSN, err)
 	}
-	logger.Info("ping db successfully")
+	logger.Info("open db successfully")
 
 	return db, nil
 }

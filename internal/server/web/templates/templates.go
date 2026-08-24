@@ -2,7 +2,7 @@ package templates
 
 import (
 	"embed"
-	"text/template"
+	"html/template"
 )
 
 //go:embed *.html

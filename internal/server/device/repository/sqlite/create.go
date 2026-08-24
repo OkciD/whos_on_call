@@ -24,7 +24,7 @@ func (r *Repository) Create(ctx context.Context, newDevice *models.Device) (*mod
 	if err != nil {
 		if sqliteError, ok := errors.AsType[sqlite.Error](err); ok {
 			if sqliteError.Code == sqlite.ErrConstraint && sqliteError.ExtendedCode == sqlite.ErrConstraintUnique {
-				return nil, fmt.Errorf("%w, %w", appErrors.ErrDuplicate, errors.New(sqliteError.Error()))
+				return nil, fmt.Errorf("%w, %w", appErrors.ErrDuplicate, sqliteError)
 			}
 		}
 
