@@ -19,7 +19,7 @@ func (r *Repository) GetUserByAPIKey(ctx context.Context, apiKey string) (*appMo
 
 	user := dbModels.User{}
 
-	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, name FROM users WHERE api_key_hash = ?", hashedAPIKey)
+	row := r.GetExecutor(ctx).QueryRowContext(ctx, "SELECT id, name FROM users WHERE api_key_sha256 = ?", hashedAPIKey)
 
 	if err := row.Scan(&user.ID, &user.Name); err != nil {
 		r.logger.WithError(err).Error("error selecting user")
