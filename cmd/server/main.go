@@ -125,15 +125,13 @@ func main() {
 	wrappedAPIMux := middleware.ApplyMiddlewares(
 		apiMux,
 		nethttpmiddleware.OapiRequestValidatorWithOptions(spec, &nethttpmiddleware.Options{
-			// todo: может переделать auth middleware на вот это?
 			Options: openapi3filter.Options{
-				AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
+				AuthenticationFunc: apiserver.NewAuthFunc(logger.ForModule("oapi_auth"), userUseCase),
 			},
 			ErrorHandlerWithOpts: apiserver.NewOapiValidatorErrorHandler(
 				logger.ForModule("oapi_validator_error_handler"),
 			),
 		}),
-		middleware.NewAuthMiddleware(logger.ForModule("auth_middleware"), userUseCase),
 		middleware.NewAccessLogMiddleware(logger),
 		middleware.NewRequestIDMiddleware(),
 		middleware.NewRecoveryMiddleware(logger),
