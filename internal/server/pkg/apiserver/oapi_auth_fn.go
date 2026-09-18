@@ -36,7 +36,7 @@ func apiKeyHeaderAuthFn(
 	if err != nil {
 		return fmt.Errorf("%w, %w", errors.ErrUnauthorized, err)
 	}
-	logger.WithFields(loggerPkg.Fields{
+	logger.WithContext(r.Context()).WithFields(loggerPkg.Fields{
 		"id":   user.ID,
 		"name": user.Name,
 	}).Info("got user")

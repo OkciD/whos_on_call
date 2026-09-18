@@ -36,8 +36,6 @@ func (c *HTTPClient) logResponse(resp *http.Response) {
 }
 
 func (c *HTTPClient) Do(req *http.Request) (*http.Response, error) {
-	// todo: assign request id
-
 	c.logRequest(req)
 
 	//nolint:gosec // todo:fix potential ssrf???

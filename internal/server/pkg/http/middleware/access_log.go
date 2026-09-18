@@ -10,7 +10,7 @@ func NewAccessLogMiddleware(logger loggerPkg.Logger) func(http.Handler) http.Han
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// todo: response code, latency
-			logger.WithRequest(r).Info("access log")
+			logger.WithContext(r.Context()).WithRequest(r).Info("access log")
 
 			next.ServeHTTP(w, r)
 		})

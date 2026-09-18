@@ -26,6 +26,7 @@ func NewWithHTTPClient(logger logger.Logger, hc httpclient.HTTPDoer, cfg Config)
 	genClient, err := gen.NewClientWithResponses(
 		cfg.BaseURL,
 		gen.WithHTTPClient(hc),
+		gen.WithRequestEditorFn(newRequestIDEditor()),
 		gen.WithRequestEditorFn(newAuthRequestEditor(cfg.APIKey)),
 	)
 	if err != nil {
