@@ -146,7 +146,7 @@ func main() {
 
 	webMux := http.NewServeMux()
 
-	webDelivery.New(webMux, logger.ForModule("web_delivery"), callStatusUseCase)
+	webDelivery.New(webMux, logger.ForModule("web_delivery"), callStatusUseCase, cfg.WebPage)
 
 	wrappedWebMux := middleware.ApplyMiddlewares(
 		webMux,

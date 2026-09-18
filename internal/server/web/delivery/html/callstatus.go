@@ -3,6 +3,7 @@ package html
 import (
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/OkciD/whos_on_call/internal/server/web/assets"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
@@ -17,6 +18,8 @@ type callStatusTemplateData struct {
 	CallStatus models.CallStatus
 
 	Constants constants
+
+	PollingIntervalSeconds int64
 }
 
 var callStatusPageTemplate = template.Must(template.ParseFS(
@@ -53,6 +56,8 @@ func (h *WebHandler) callStatusPartial() http.Handler {
 				CallStateInactive: models.CallStateInactive,
 				CallStateActive:   models.CallStateActive,
 			},
+
+			PollingIntervalSeconds: int64(h.config.CallStatusPollingInterval.Duration / time.Second),
 		}
 
 		if err := callStatusPartialTemplate.ExecuteTemplate(w, "partial:callstatus", templateData); err != nil {

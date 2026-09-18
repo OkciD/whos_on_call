@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
+	"github.com/OkciD/whos_on_call/internal/server/web"
 	"github.com/OkciD/whos_on_call/internal/server/web/assets"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
@@ -11,12 +12,21 @@ import (
 type WebHandler struct {
 	logger logger.Logger
 
+	config web.Config
+
 	callStatusUseCase callstatus.UseCase
 }
 
-func New(mux *http.ServeMux, logger logger.Logger, callStatusUseCase callstatus.UseCase) *WebHandler {
+func New(
+	mux *http.ServeMux,
+	logger logger.Logger,
+	callStatusUseCase callstatus.UseCase,
+	config web.Config,
+) *WebHandler {
 	h := &WebHandler{
 		logger: logger,
+
+		config: config,
 
 		callStatusUseCase: callStatusUseCase,
 	}

@@ -24,6 +24,9 @@
             "relaxationPeriod": "30m"
         }
     },
+    "webpage": {
+        "callStatusPollingInterval": "60s"
+    },
     "db": {
         "driver": "sqlite3",
         "dsn": "file:build/dev/db/db.sqlite3",
