@@ -11,8 +11,7 @@ func (u *User) ToAppModel() *appModels.User {
 
 func FromUserAppModel(appUser *appModels.User) *User {
 	return &User{
-		//nolint:gosec // todo:fix potential overflow
-		Id:   int32(appUser.ID),
+		Id:   int64(appUser.ID),
 		Name: appUser.Name,
 	}
 }

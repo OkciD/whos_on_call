@@ -149,7 +149,7 @@ type CallStatus = []UserStatus
 // Device defines model for Device.
 type Device struct {
 	// Id Device ID
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	// Name Device name
 	Name string `json:"name"`
@@ -161,7 +161,7 @@ type Device struct {
 // DeviceFeature defines model for DeviceFeature.
 type DeviceFeature struct {
 	// Id Feature ID
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	// LastActive Last active timestamp in RFC3339 format
 	LastActive *time.Time `json:"lastActive,omitempty"`
@@ -202,7 +202,7 @@ type DeviceStatus struct {
 	Features []DeviceFeature `json:"features"`
 
 	// Id Device ID
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	// Name Device name
 	Name string `json:"name"`
@@ -251,7 +251,7 @@ type ErrorResponseWholeRequestError string
 // User defines model for User.
 type User struct {
 	// Id User ID
-	Id int32 `json:"id"`
+	Id int64 `json:"id"`
 
 	// Name User name
 	Name string `json:"name"`

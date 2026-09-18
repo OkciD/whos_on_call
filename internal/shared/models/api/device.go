@@ -27,8 +27,7 @@ func (d *Device) ToAppModel() (*appModels.Device, error) {
 
 func FromDeviceAppModel(appDevice *appModels.Device) (*Device, error) {
 	apiDevice := &Device{
-		//nolint:gosec // todo:fix potential overflow
-		Id:   int32(appDevice.ID),
+		Id:   int64(appDevice.ID),
 		Name: appDevice.Name,
 	}
 

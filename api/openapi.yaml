@@ -136,7 +136,7 @@ paths:
           description: "Device ID"
           schema:
             type: integer
-            format: int32
+            format: int64
       requestBody:
         required: true
         content:
@@ -186,7 +186,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: "User ID"
         name:
           type: string
@@ -213,7 +213,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: "Device ID"
         name:
           type: string
@@ -262,7 +262,7 @@ components:
       properties:
         id:
           type: integer
-          format: int32
+          format: int64
           description: "Feature ID"
         type:
           $ref: "#/components/schemas/DeviceFeatureType"

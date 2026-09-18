@@ -96,9 +96,9 @@ type ClientInterface interface {
 	CreateDevice(ctx context.Context, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateDeviceFeatureWithBody request with any body
-	UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateDeviceFeature(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateDeviceFeature(ctx context.Context, deviceid int64, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListDevices request
 	ListDevices(ctx context.Context, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -134,7 +134,7 @@ func (c *Client) CreateDevice(ctx context.Context, body CreateDeviceJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDeviceFeatureRequestWithBody(c.Server, deviceid, contentType, body)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (c *Client) UpdateDeviceFeatureWithBody(ctx context.Context, deviceid int32
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateDeviceFeature(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateDeviceFeature(ctx context.Context, deviceid int64, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDeviceFeatureRequest(c.Server, deviceid, body)
 	if err != nil {
 		return nil, err
@@ -235,7 +235,7 @@ func NewCreateDeviceRequestWithBody(server string, contentType string, body io.R
 }
 
 // NewUpdateDeviceFeatureRequest calls the generic UpdateDeviceFeature builder with application/json body
-func NewUpdateDeviceFeatureRequest(server string, deviceid int32, body UpdateDeviceFeatureJSONRequestBody) (*http.Request, error) {
+func NewUpdateDeviceFeatureRequest(server string, deviceid int64, body UpdateDeviceFeatureJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -246,12 +246,12 @@ func NewUpdateDeviceFeatureRequest(server string, deviceid int32, body UpdateDev
 }
 
 // NewUpdateDeviceFeatureRequestWithBody generates requests for UpdateDeviceFeature with any type of body
-func NewUpdateDeviceFeatureRequestWithBody(server string, deviceid int32, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpdateDeviceFeatureRequestWithBody(server string, deviceid int64, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "deviceid", deviceid, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: "int32"})
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "deviceid", deviceid, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "integer", Format: "int64"})
 	if err != nil {
 		return nil, err
 	}
@@ -449,9 +449,9 @@ type ClientWithResponsesInterface interface {
 	CreateDeviceWithResponse(ctx context.Context, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error)
 
 	// UpdateDeviceFeatureWithBodyWithResponse request with any body
-	UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
+	UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
 
-	UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
+	UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int64, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error)
 
 	// ListDevicesWithResponse request
 	ListDevicesWithResponse(ctx context.Context, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*ListDevicesResponse, error)
@@ -596,7 +596,7 @@ func (c *ClientWithResponses) CreateDeviceWithResponse(ctx context.Context, body
 }
 
 // UpdateDeviceFeatureWithBodyWithResponse request with arbitrary body returning *UpdateDeviceFeatureResponse
-func (c *ClientWithResponses) UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
+func (c *ClientWithResponses) UpdateDeviceFeatureWithBodyWithResponse(ctx context.Context, deviceid int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
 	rsp, err := c.UpdateDeviceFeatureWithBody(ctx, deviceid, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -604,7 +604,7 @@ func (c *ClientWithResponses) UpdateDeviceFeatureWithBodyWithResponse(ctx contex
 	return ParseUpdateDeviceFeatureResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int32, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
+func (c *ClientWithResponses) UpdateDeviceFeatureWithResponse(ctx context.Context, deviceid int64, body UpdateDeviceFeatureJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDeviceFeatureResponse, error) {
 	rsp, err := c.UpdateDeviceFeature(ctx, deviceid, body, reqEditors...)
 	if err != nil {
 		return nil, err

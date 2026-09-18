@@ -33,8 +33,7 @@ func (d *DeviceFeature) ToAppModel() (*appModels.DeviceFeature, error) {
 
 func FromDeviceFeatureAppModel(appDeviceFeature *appModels.DeviceFeature) (*DeviceFeature, error) {
 	apiDeviceFeature := &DeviceFeature{
-		//nolint:gosec // todo:fix potential overflow
-		Id:         int32(appDeviceFeature.ID),
+		Id:         int64(appDeviceFeature.ID),
 		LastActive: appDeviceFeature.LastActive,
 	}
 
