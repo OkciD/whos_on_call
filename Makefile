@@ -6,8 +6,12 @@ LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 .PHONY: build
 build: build/server build/client
 
+$(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js:
+	mkdir -p $(ROOT_DIR)/internal/server/web/assets/static/js
+	curl https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
+
 .PHONY: build/server
-build/server:
+build/server: $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
 	go build -o $(BIN_DIR)/server ./cmd/server
 
 .PHONY: build/client

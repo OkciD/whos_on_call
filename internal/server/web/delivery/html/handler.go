@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
-	"github.com/OkciD/whos_on_call/internal/server/web/static"
+	"github.com/OkciD/whos_on_call/internal/server/web/assets"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
@@ -21,8 +21,9 @@ func New(mux *http.ServeMux, logger logger.Logger, callStatusUseCase callstatus.
 		callStatusUseCase: callStatusUseCase,
 	}
 
-	mux.Handle("GET /", h.CallStatus())
-	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.FS(static.StaticFS))))
+	mux.Handle("GET /", h.callStatusPage())
+	mux.Handle("GET /partials/callstatus", h.callStatusPartial())
+	mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServer(http.FS(assets.StaticFiles))))
 
 	return h
 }

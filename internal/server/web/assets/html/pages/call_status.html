@@ -1,0 +1,5 @@
+{{ define "page:head" }}{{ end }}
+
+{{ define "page:content" }}
+<div hx-get="/partials/callstatus" hx-trigger="load" hx-swap="outerHTML"></div>
+{{ end }}

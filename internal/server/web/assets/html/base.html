@@ -1,0 +1,25 @@
+{{ define "base" }}
+<!doctype html>
+<html lang="ru-RU">
+
+<head>
+    <meta charset="utf-8">
+    <title>whos_on_call</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="htmx-config"
+        content='{"includeIndicatorStyles":false,"historyCacheSize":0,"disableInheritance":true,"timeout":5000}'
+    >
+
+    <script defer src="/static/js/htmx.min.js"></script>
+    <link href="/static/css/index.css" rel="stylesheet" />
+    {{ template "page:head" . }}
+</head>
+
+<body>
+    {{ template "page:content" . }}
+</body>
+
+</html>
+{{ end }}

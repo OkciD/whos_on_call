@@ -1,14 +1,14 @@
-{{define "content"}}
-
-<div class="status-cards-container">
-    {{range .CallStatus}}
-        <div class="status-card {{- if eq .State $.Constants.CallStateActive}} status-card__active {{else}} status-card__inactive {{end}}">
+{{ define "partial:callstatus" }}
+{{/* htmx load polling */}}
+<div class="status-cards-container" hx-get="/partials/callstatus" hx-trigger="load delay:60s" hx-swap="outerHTML">
+    {{ range .CallStatus }}
+        <div class="status-card {{- if eq .State $.Constants.CallStateActive }} status-card__active {{ else }} status-card__inactive {{ end }}">
             <h2 class="status-card_title">
                 {{ .User.Name }}
             </h2>
 
             <ul class="status-card_devices-list">
-                {{range .Devices}}
+                {{ range .Devices }}
                     <li class="status-card_device">
                         <div class="status-card_device_identifier">
                             <img src="/static/icons/device_{{ printf "%s" .Type }}.svg">
@@ -16,17 +16,16 @@
                         </div>
 
                         <ul class="status-card_device_features-list">
-                            {{range .Features}}
+                            {{ range .Features }}
                                 <li class="status-card_device_feature">
                                     <img src="/static/icons/device_feature_{{ printf "%s" .Type }}_{{ printf "%s" .Status }}.svg">
                                 </li>
-                            {{end}}
+                            {{ end }}
                         </ul>
                     </li>
-                {{end}}
+                {{ end }}
             </ul>
         </div>
-    {{end}}
+    {{ end }}
 </div>
-
-{{end}}
+{{ end }}
