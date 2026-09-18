@@ -2,16 +2,18 @@ ROOT_DIR := $(PWD)
 BIN_DIR := $(ROOT_DIR)/build/bin
 LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
 LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
+HTMX_FILE := $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
 
 .PHONY: build
 build: build/server build/client
 
-$(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js:
-	mkdir -p $(ROOT_DIR)/internal/server/web/assets/static/js
-	curl https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
+# todo: сhecksums
+$(HTMX_FILE):
+	mkdir -p $(@D)
+	curl https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(@)
 
 .PHONY: build/server
-build/server: $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
+build/server: $(HTMX_FILE)
 	go build -o $(BIN_DIR)/server ./cmd/server
 
 .PHONY: build/client
@@ -31,7 +33,7 @@ debug/server:
 	dlv debug -l 127.0.0.1:38697 --headless $(ROOT_DIR)/cmd/server/*.go -- -config=./configs/server_local.json
 
 .PHONY: run/client
-run/client: clean build
+run/client: build/client
 	$(BIN_DIR)/client -config=$(ROOT_DIR)/configs/client_local.json $(if $(device),-device=$(device)) $(if $(event),-event=$(event))
 
 .PHONY: debug/client
