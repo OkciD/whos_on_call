@@ -36,8 +36,8 @@ import (
 	userUseCase "github.com/OkciD/whos_on_call/internal/server/user/usecase"
 	htmxDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/htmx"
 	sseDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/sse"
-	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 

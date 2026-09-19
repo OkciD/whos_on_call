@@ -5,7 +5,7 @@ import (
 
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/sse"
-	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 

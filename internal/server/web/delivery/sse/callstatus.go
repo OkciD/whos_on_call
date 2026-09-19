@@ -12,8 +12,8 @@ import (
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/sse"
 	"github.com/OkciD/whos_on_call/internal/server/web/assets"
-	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
+	"github.com/OkciD/whos_on_call/internal/shared/pkg/eventbus"
 )
 
 type constants struct {
