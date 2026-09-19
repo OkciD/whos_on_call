@@ -137,7 +137,7 @@ func main() {
 			),
 		}),
 		middleware.NewAccessLogMiddleware(logger),
-		middleware.NewRequestIDMiddleware(),
+		middleware.NewRequestIDMiddleware(true),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 
@@ -156,7 +156,7 @@ func main() {
 	wrappedWebMux := middleware.ApplyMiddlewares(
 		webMux,
 		middleware.NewAccessLogMiddleware(logger),
-		middleware.NewRequestIDMiddleware(),
+		middleware.NewRequestIDMiddleware(false),
 		middleware.NewRecoveryMiddleware(logger),
 	)
 

@@ -54,11 +54,10 @@ func (h *Handler) renderCallStatusPartial(ctx context.Context) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (h *Handler) sendCallStatusToSSE(ctx context.Context, conn *sse.Conn) {
+func (h *Handler) sendCallStatusToSSE(ctx context.Context, conn *sse.Conn) error {
 	content, err := h.renderCallStatusPartial(ctx)
 	if err != nil {
-		h.logger.WithError(err).Error("failed to render call status partial")
-		return
+		return fmt.Errorf("failed to render call status partial: %w", err)
 	}
 
 	sseEvent := sse.Event{
@@ -69,10 +68,10 @@ func (h *Handler) sendCallStatusToSSE(ctx context.Context, conn *sse.Conn) {
 	}
 
 	if err := conn.SendEvent(ctx, &sseEvent); err != nil {
-		h.logger.WithError(err).Error("failed to send event")
+		return fmt.Errorf("failed to send event: %w", err)
 	}
 
-	h.logger.WithField("event_id", sseEvent.ID).Info("sse event sent")
+	return nil
 }
 
 func (h *Handler) callStatus() http.Handler {
@@ -87,10 +86,13 @@ func (h *Handler) callStatus() http.Handler {
 		conn, err := sse.Upgrade(r.Context(), w)
 		if err != nil {
 			logger.WithError(err).Error("failed to upgrade connection to sse")
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		h.sseConnectionsMux.Lock()
 		h.sseConnections[connID] = conn
+		h.sseConnectionsMux.Unlock()
 
 		defer func() {
 			err := conn.Close()
@@ -99,22 +101,30 @@ func (h *Handler) callStatus() http.Handler {
 			} else {
 				logger.Debug("sse connection closed")
 			}
+			h.sseConnectionsMux.Lock()
 			delete(h.sseConnections, connID)
+			h.sseConnectionsMux.Unlock()
 		}()
 
-		h.logger.Info("sse conn established")
-
-		h.sendCallStatusToSSE(r.Context(), conn)
+		logger.Info("sse conn established")
 
 		callStatusUpdatedChan := h.eb.On(eventbus.EventTypeDeviceFeatureUpdated{})
 		defer h.eb.Off(eventbus.EventTypeDeviceFeatureUpdated{}, callStatusUpdatedChan)
 
+		if err := h.sendCallStatusToSSE(r.Context(), conn); err != nil {
+			logger.WithError(err).Error("failed to send initial event")
+			return
+		}
+
 		for {
 			select {
 			case <-callStatusUpdatedChan:
-				h.logger.Debug("call status update event received from eventbus")
-				h.sendCallStatusToSSE(r.Context(), conn)
-				return
+				logger.Debug("call status update event received from eventbus")
+				if err := h.sendCallStatusToSSE(r.Context(), conn); err != nil {
+					logger.WithError(err).Error("failed to send subsequent sse event")
+					return
+				}
+				continue
 			case <-r.Context().Done():
 				return
 			}

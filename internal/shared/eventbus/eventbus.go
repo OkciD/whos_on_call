@@ -15,7 +15,7 @@ type EventChan chan Event
 type EventBus interface {
 	Emit(event Event)
 	On(eventType EventType) EventChan
-	Off(eventTypse EventType, ch EventChan)
+	Off(eventType EventType, ch EventChan)
 }
 
 type eventBus struct {
@@ -33,7 +33,7 @@ func (eb *eventBus) On(eventType EventType) EventChan {
 	eb.mu.Lock()
 	defer eb.mu.Unlock()
 
-	ch := make(EventChan)
+	ch := make(EventChan, 1)
 	eb.subscribers[eventType] = append(eb.subscribers[eventType], ch)
 
 	return ch
@@ -46,7 +46,10 @@ func (eb *eventBus) Emit(event Event) {
 	chans := append([]EventChan{}, eb.subscribers[event.Type]...)
 	go func() {
 		for _, ch := range chans {
-			ch <- event
+			select {
+			case ch <- event:
+			default:
+			}
 		}
 	}()
 }
@@ -58,11 +61,6 @@ func (eb *eventBus) Off(eventType EventType, ch EventChan) {
 		for i, subscriber := range subscribers {
 			if ch == subscriber {
 				eb.subscribers[eventType] = append(subscribers[:i], subscribers[i+1:]...)
-				close(ch)
-				//nolint:revive // фолзит
-				for range ch {
-					// Drain the channel
-				}
 				return
 			}
 		}

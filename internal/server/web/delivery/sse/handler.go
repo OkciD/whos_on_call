@@ -2,6 +2,7 @@ package sse
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
 	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
@@ -13,8 +14,10 @@ import (
 type Handler struct {
 	logger logger.Logger
 
-	eb             eventbus.EventBus
-	sseConnections map[string]*sse.Conn
+	eb eventbus.EventBus
+
+	sseConnectionsMux sync.Mutex
+	sseConnections    map[string]*sse.Conn
 
 	callStatusUseCase callstatus.UseCase
 }
@@ -28,8 +31,9 @@ func New(
 	h := &Handler{
 		logger: logger,
 
-		eb:             eventBus,
-		sseConnections: make(map[string]*sse.Conn, 0),
+		eb: eventBus,
+
+		sseConnections: make(map[string]*sse.Conn),
 
 		callStatusUseCase: callStatusUseCase,
 	}
@@ -40,6 +44,9 @@ func New(
 }
 
 func (h *Handler) Stop() {
+	h.sseConnectionsMux.Lock()
+	defer h.sseConnectionsMux.Unlock()
+
 	for id, conn := range h.sseConnections {
 		logger := h.logger.WithField("conn_id", id)
 

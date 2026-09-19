@@ -11,12 +11,15 @@ import (
 
 const ReqIDHeader string = "X-Request-ID"
 
-func NewRequestIDMiddleware() func(http.Handler) http.Handler {
+func NewRequestIDMiddleware(allowReqIDFromClient bool) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			reqID := r.Header.Get(ReqIDHeader)
+			var reqID string
+			if allowReqIDFromClient {
+				reqID = r.Header.Get(ReqIDHeader)
+			}
 			if reqID == "" {
-				reqID = uuid.New().String()
+				reqID = uuid.NewString()
 			}
 
 			contextWithReqID := appContext.StoreRequestID(r.Context(), reqID)
