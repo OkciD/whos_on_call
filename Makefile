@@ -5,18 +5,24 @@ LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 HTMX_FILE := $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
 HTMX_SSE_FILE := $(ROOT_DIR)/internal/server/web/assets/static/js/htmx-ext-sse.min.js
 
+# Official SRI (sha384) digests from htmx.org
+HTMX_SHA384 := H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V
+HTMX_SSE_SHA384 := A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N
+
 .PHONY: build
 build: build/server build/client
 
-# todo: сhecksums
 $(HTMX_FILE):
 	mkdir -p $(@D)
-	curl https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(@)
+	curl -fsSL https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(@).tmp
+	test "$$(openssl dgst -sha384 -binary $(@).tmp | openssl base64 -A)" = "$(HTMX_SHA384)"
+	mv $(@).tmp $(@)
 
-# todo: сhecksums
 $(HTMX_SSE_FILE):
 	mkdir -p $(@D)
-	curl https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4 --output $(@)
+	curl -fsSL https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4 --output $(@).tmp
+	test "$$(openssl dgst -sha384 -binary $(@).tmp | openssl base64 -A)" = "$(HTMX_SSE_SHA384)"
+	mv $(@).tmp $(@)
 
 .PHONY: build/server
 build/server: $(HTMX_FILE) $(HTMX_SSE_FILE)
