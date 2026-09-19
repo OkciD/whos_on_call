@@ -10,11 +10,10 @@ import (
 	"github.com/google/uuid"
 
 	appContext "github.com/OkciD/whos_on_call/internal/server/pkg/context"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/sse"
 	"github.com/OkciD/whos_on_call/internal/server/web/assets"
 	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
-
-	"go.jetify.com/sse"
 )
 
 type constants struct {
@@ -60,14 +59,9 @@ func (h *Handler) sendCallStatusToSSE(ctx context.Context, conn *sse.Conn) error
 		return fmt.Errorf("failed to render call status partial: %w", err)
 	}
 
-	sseEvent := sse.Event{
-		ID:    uuid.NewString(),
-		Event: "CallStatus",
-		Data:  sse.Raw(content),
-		Split: true,
-	}
+	sseEvent := sse.NewEventWithRawData("CallStatus", content, true)
 
-	if err := conn.SendEvent(ctx, &sseEvent); err != nil {
+	if err := conn.SendEvent(ctx, sseEvent); err != nil {
 		return fmt.Errorf("failed to send event: %w", err)
 	}
 
@@ -83,28 +77,13 @@ func (h *Handler) callStatus() http.Handler {
 
 		logger := h.logger.WithField("conn_id", connID)
 
-		conn, err := sse.Upgrade(r.Context(), w)
+		conn, err := h.ssePool.NewConnWithID(connID, w, r)
 		if err != nil {
-			logger.WithError(err).Error("failed to upgrade connection to sse")
+			logger.WithError(err).Error("failed to open new sse conn from pool")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
-		h.sseConnectionsMux.Lock()
-		h.sseConnections[connID] = conn
-		h.sseConnectionsMux.Unlock()
-
-		defer func() {
-			err := conn.Close()
-			if err != nil {
-				logger.WithError(err).Warn("failed to close sse connection")
-			} else {
-				logger.Debug("sse connection closed")
-			}
-			h.sseConnectionsMux.Lock()
-			delete(h.sseConnections, connID)
-			h.sseConnectionsMux.Unlock()
-		}()
+		defer h.ssePool.CloseConn(connID)
 
 		logger.Info("sse conn established")
 
@@ -125,6 +104,8 @@ func (h *Handler) callStatus() http.Handler {
 					return
 				}
 				continue
+			case <-conn.Context().Done():
+				return
 			case <-r.Context().Done():
 				return
 			}

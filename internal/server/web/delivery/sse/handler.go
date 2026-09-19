@@ -2,13 +2,11 @@ package sse
 
 import (
 	"net/http"
-	"sync"
 
 	"github.com/OkciD/whos_on_call/internal/server/callstatus"
+	"github.com/OkciD/whos_on_call/internal/server/pkg/sse"
 	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
-
-	"go.jetify.com/sse"
 )
 
 type Handler struct {
@@ -16,8 +14,7 @@ type Handler struct {
 
 	eb eventbus.EventBus
 
-	sseConnectionsMux sync.Mutex
-	sseConnections    map[string]*sse.Conn
+	ssePool sse.Pool
 
 	callStatusUseCase callstatus.UseCase
 }
@@ -33,7 +30,7 @@ func New(
 
 		eb: eventBus,
 
-		sseConnections: make(map[string]*sse.Conn),
+		ssePool: sse.NewPool(logger),
 
 		callStatusUseCase: callStatusUseCase,
 	}
@@ -44,18 +41,5 @@ func New(
 }
 
 func (h *Handler) Stop() {
-	h.sseConnectionsMux.Lock()
-	defer h.sseConnectionsMux.Unlock()
-
-	for id, conn := range h.sseConnections {
-		logger := h.logger.WithField("conn_id", id)
-
-		err := conn.Close()
-		if err != nil {
-			logger.WithError(err).Warn("failed to close sse connection")
-		}
-		logger.Debug("sse connection closed")
-	}
-
-	h.sseConnections = make(map[string]*sse.Conn, 0)
+	h.ssePool.CloseAllConns()
 }
