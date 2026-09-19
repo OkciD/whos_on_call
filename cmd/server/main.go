@@ -34,7 +34,9 @@ import (
 	userHttpDelivery "github.com/OkciD/whos_on_call/internal/server/user/delivery/http"
 	userRepositorySqlite "github.com/OkciD/whos_on_call/internal/server/user/repository/sqlite"
 	userUseCase "github.com/OkciD/whos_on_call/internal/server/user/usecase"
-	webDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/html"
+	htmxDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/htmx"
+	sseDelivery "github.com/OkciD/whos_on_call/internal/server/web/delivery/sse"
+	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	configUtils "github.com/OkciD/whos_on_call/internal/shared/pkg/config"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
@@ -83,11 +85,13 @@ func main() {
 	deviceFeatureRepo := deviceFeatureRepositorySqlite.New(logger.ForModule("devicefeature_repo"), db)
 
 	txManager := dbPkg.NewTxManager(db)
+	eb := eventbus.NewEventBus()
 
 	userUseCase := userUseCase.New(logger.ForModule("user_usecase"), userRepo)
 	deviceUseCase := deviceUseCase.New(logger.ForModule("device_usecase"), txManager, deviceRepo, deviceFeatureRepo)
 	deviceFeatureUseCase := deviceFeatureUseCase.New(
 		logger.ForModule("devicefeature_usecase"),
+		eb,
 		deviceRepo,
 		deviceFeatureRepo,
 	)
@@ -146,7 +150,8 @@ func main() {
 
 	webMux := http.NewServeMux()
 
-	webDelivery.New(webMux, logger.ForModule("web_delivery"), callStatusUseCase, cfg.WebPage)
+	htmxDelivery.New(webMux, logger.ForModule("web_delivery"))
+	sseDelivery := sseDelivery.New(webMux, logger.ForModule("sse_delivery"), eb, callStatusUseCase)
 
 	wrappedWebMux := middleware.ApplyMiddlewares(
 		webMux,
@@ -171,6 +176,7 @@ func main() {
 	if err = apiServer.Stop(); err != nil {
 		logger.WithError(err).Fatal("error stopping api server")
 	}
+	sseDelivery.Stop()
 	if err = webServer.Stop(); err != nil {
 		logger.WithError(err).Fatal("error stopping web server")
 	}

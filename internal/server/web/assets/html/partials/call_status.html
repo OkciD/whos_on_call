@@ -1,6 +1,5 @@
 {{ define "partial:callstatus" }}
-{{/* htmx load polling */}}
-<div class="status-cards-container" hx-get="/partials/callstatus" hx-trigger="load delay:{{ printf "%d" .PollingIntervalSeconds }}s" hx-swap="outerHTML">
+<div class="status-cards-container">
     {{ range .CallStatus }}
         <div class="status-card {{- if eq .State $.Constants.CallStateActive }} status-card__active {{ else }} status-card__inactive {{ end }}">
             <h2 class="status-card_title">

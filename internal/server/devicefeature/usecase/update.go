@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/OkciD/whos_on_call/internal/shared/eventbus"
 	"github.com/OkciD/whos_on_call/internal/shared/models"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
@@ -65,6 +66,14 @@ func (u *UseCase) Update(
 		"deviceFeatureType":   newDeviceFeature.Type,
 		"deviceFeatureStatus": newDeviceFeature.Status,
 	}).Info("device feature updated successfully")
+
+	if u.eb != nil {
+		u.logger.Debug("sending event to eventbus")
+		u.eb.Emit(eventbus.Event{
+			Type:    eventbus.EventTypeDeviceFeatureUpdated{},
+			Payload: nil,
+		})
+	}
 
 	return newDeviceFeature, nil
 }

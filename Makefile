@@ -3,6 +3,7 @@ BIN_DIR := $(ROOT_DIR)/build/bin
 LOCAL_DB_DIR := $(ROOT_DIR)/build/dev/db
 LOCAL_DB_PATH := $(LOCAL_DB_DIR)/db.sqlite3
 HTMX_FILE := $(ROOT_DIR)/internal/server/web/assets/static/js/htmx.min.js
+HTMX_SSE_FILE := $(ROOT_DIR)/internal/server/web/assets/static/js/htmx-ext-sse.min.js
 
 .PHONY: build
 build: build/server build/client
@@ -12,8 +13,13 @@ $(HTMX_FILE):
 	mkdir -p $(@D)
 	curl https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js --output $(@)
 
+# todo: сhecksums
+$(HTMX_SSE_FILE):
+	mkdir -p $(@D)
+	curl https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4 --output $(@)
+
 .PHONY: build/server
-build/server: $(HTMX_FILE)
+build/server: $(HTMX_FILE) $(HTMX_SSE_FILE)
 	go build -o $(BIN_DIR)/server ./cmd/server
 
 .PHONY: build/client

@@ -4,7 +4,6 @@ import (
 	callStatusUseCase "github.com/OkciD/whos_on_call/internal/server/callstatus/usecase"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/db"
 	"github.com/OkciD/whos_on_call/internal/server/pkg/http/server"
-	"github.com/OkciD/whos_on_call/internal/server/web"
 	"github.com/OkciD/whos_on_call/internal/shared/pkg/logger"
 )
 
@@ -17,8 +16,6 @@ type config struct {
 	CallStatus struct {
 		UseCase callStatusUseCase.Config `json:"useCase"`
 	} `json:"callStatus"`
-
-	WebPage web.Config `json:"webPage"`
 
 	DB db.Config `json:"db"`
 }

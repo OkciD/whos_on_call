@@ -38,3 +38,4 @@ build/dev/db/db.sqlite3-*
 .DS_Store
 
 internal/server/web/assets/static/js/htmx.min.js
+internal/server/web/assets/static/js/htmx-ext-sse.min.js

@@ -11,6 +11,7 @@ require (
 	github.com/pressly/goose/v3 v3.26.0
 	github.com/simukti/sqldb-logger v0.0.0-20230108155151-646c1a075551
 	github.com/sirupsen/logrus v1.9.3
+	go.jetify.com/sse v0.1.0
 	golang.org/x/sync v0.19.0
 )
 
